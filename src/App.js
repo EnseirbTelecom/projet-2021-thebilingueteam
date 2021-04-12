@@ -16,6 +16,8 @@ import {
   Text,
   useColorScheme,
   View,
+  TextInput,
+  TouchableOpacity
 } from 'react-native';
 
 import {
@@ -26,87 +28,91 @@ import {
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 
-const Section = ({children, title}): Node => {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-};
 
-const App: () => Node = () => {
-  const isDarkMode = useColorScheme() === 'dark';
 
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
+export default class App extends React.Component {
+    render(){
+        return (
+            <View style={styles.container}>
+                <Text style={styles.logo}>INP GRAM</Text>
+                <View style={styles.inputView} >
+                    <TextInput
+                     style={styles.inputText}
+                     placeholder="Email"
+                     placeholderTextColor="white"
+                     onChangeText={text => this.setState({email:text})}/>
+                </View>
+                <View style={styles.inputView} >
+                     <TextInput
+                         secureTextEntry
+                         style={styles.inputText}
+                         placeholder="Password"
+                         placeholderTextColor="white"
+                         onChangeText={text => this.setState({password:text})}/>
+                </View>
+                <TouchableOpacity>
+                   <Text style={styles.forgot}>Forgot Password?</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.loginBtn}>
+                   <Text style={styles.loginText}>LOGIN</Text>
+                </TouchableOpacity>
+                <TouchableOpacity>
+                   <Text style={styles.loginText}>Sign up</Text>
+                </TouchableOpacity>
 
-  return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.js</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
-  );
-};
+          </View>
+
+        );
+    }
+}
 
 const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
+    container: {
+        flex: 1,
+        backgroundColor: '#FEFEFE',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    logo:{
+        fontWeight:"bold",
+        fontSize:50,
+        color:"#fb5b5a",
+        marginBottom:40
+    },
+
+    inputText:{
+        height:50,
+        color:"white"
+    },
+
+    forgot:{
+        color:"#900C3F",
+        fontSize:11
+    },
+
+    inputView:{
+        width:"80%",
+        backgroundColor:"#900C3F",
+        borderRadius:25,
+        height:50,
+        marginBottom:20,
+        justifyContent:"center",
+        padding:20
+    },
+
+    loginBtn:{
+        width:"80%",
+        backgroundColor:"#fb5b5a",
+        borderRadius:25,
+        height:50,
+        alignItems:"center",
+        justifyContent:"center",
+        marginTop:40,
+        marginBottom:10
+    },
+    loginText:{
+        color:"white"
+    }
+
 });
 
-export default App;
