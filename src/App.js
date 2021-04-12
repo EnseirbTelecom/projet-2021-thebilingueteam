@@ -1,13 +1,10 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow strict-local
- */
+import 'react-native-gesture-handler';
+import * as React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
-import React from 'react';
-import type {Node} from 'react';
+
 import {
   SafeAreaView,
   ScrollView,
@@ -17,7 +14,8 @@ import {
   useColorScheme,
   View,
   TextInput,
-  TouchableOpacity
+  TouchableOpacity,
+  Button
 } from 'react-native';
 
 import {
@@ -29,12 +27,10 @@ import {
 } from 'react-native/Libraries/NewAppScreen';
 
 
-
-export default class App extends React.Component {
-    render(){
-        return (
-            <View style={styles.container}>
-                <Text style={styles.logo}>INP GRAM</Text>
+function HomeScreen() {
+    return (
+        <View style={styles.container}>
+            <Text style={styles.logo}>INP GRAM</Text>
                 <View style={styles.inputView} >
                     <TextInput
                      style={styles.inputText}
@@ -60,11 +56,58 @@ export default class App extends React.Component {
                    <Text style={styles.loginText}>Sign up</Text>
                 </TouchableOpacity>
 
-          </View>
-
-        );
-    }
+        </View>
+  );
 }
+
+function UserScreen() {
+  return (
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <Text>Futur user page</Text>
+    </View>
+  );
+}
+
+function AddPicScreen() {
+  return (
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <Text>Futur page - adding picture with the phone</Text>
+    </View>
+  );
+}
+
+function SearchScreen() {
+  return (
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <Text>Futur page - Searching a theme, someone</Text>
+    </View>
+  );
+}
+
+function LikesScreen() {
+  return (
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <Text>Futur page - See who liked your publications</Text>
+    </View>
+  );
+}
+
+const Tab = createBottomTabNavigator();
+
+export default function App() {
+  return (
+    <NavigationContainer>
+      <Tab.Navigator>
+        <Tab.Screen name="Home" component={HomeScreen} />
+        <Tab.Screen name="Search" component={SearchScreen} />
+        <Tab.Screen name="Add Picture" component={AddPicScreen} />
+        <Tab.Screen name="Likes" component={LikesScreen} />
+        <Tab.Screen name="User Page" component={UserScreen} />
+      </Tab.Navigator>
+    </NavigationContainer>
+  );
+}
+
 
 const styles = StyleSheet.create({
     container: {
