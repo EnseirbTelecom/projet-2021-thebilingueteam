@@ -3,6 +3,10 @@ const mongooose = require('mongoose');
 const User = require('../DB/User');
 const route = express.Router();
 
+route.get('/', (req,res) => {
+    res.send('API is working properly');
+});
+
 route.post('/', async (req,res) => {
     const {pseudo,mail,password} = req.body;
     let user = {};
@@ -13,9 +17,5 @@ route.post('/', async (req,res) => {
     await userModel.save();
     res.json(userModel);
 });
-
-
-
-
 
 module.exports = route;
