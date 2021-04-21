@@ -1,33 +1,44 @@
-const express = require('express');
-const mongooose = require('mongoose');
-const User = require('../DB/User');
-const route = express.Router();
+const { json } = require('body-parser')
+const express = require('express')
+const mongooose = require('mongoose')
 
-route.get('/:pseudo', (req,res) => {
-    const pseudo = req.params.pseudo;
-    User.findOne({mail: pseudo})
+
+
+
+const User = require('../DB/User')
+
+const route = express.Router()
+
+route.post('/', async (req,res,next) => {
+    const {mail,pseudo,password} = req.body
+    User.findOne({mail: mail}) //on vérifie si l'utilsateur est présent dans la BDD
     .exec()
-    .then(doc => {
-        console.log(doc);
-        console.log('Utilisateur trouvé')
-        res.status(200).json(doc);
+    .then((doc) => {
+        if (doc === null){ //le mail n'est pas utilise et on peut ernegisrer l'utilisateur
+            const user = {
+                _id: new mongooose.Types.ObjectId(),
+                pseudo: pseudo,
+                mail: mail,
+                password: password,
+            }
+            const newUser = new User(user)
+            newUser.save().then( result => {
+                console.log(result)
+                res.status(200).json(user)
+            })
+            .catch((error) => {
+                console.log(error)
+                res.status(500).json('Erreur lors de l enregistrement de l utilisateur')
+            })
+        }
+        else{ //le mail est déjà utilisé
+            res.status(415).json('Cette adresse mail est déjà utilisée par un utilisateur');
+        }
     })
     .catch((err) => {
-        console.log(err);
-        res.status(500).json({error: err})
+        console.log(err)
+        res.status(500).json('Erreur lors de la recherche de l adresse mail dans la BDD')
     })
 });
 
-route.post('/', async (req,res) => {
-    const {pseudo,mail,password} = req.body;
-    let user = {};
-    user._id = new mongooose.Types.ObjectId();
-    user.pseudo = pseudo;
-    user.mail = mail;
-    user.password = password;
-    let userModel = new User(user);
-    await userModel.save();
-    res.json(userModel);
-});
-
-module.exports = route;
+module.exports = route
