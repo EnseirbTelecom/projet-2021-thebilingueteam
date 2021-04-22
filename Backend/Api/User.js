@@ -1,4 +1,3 @@
-const { json } = require('body-parser')
 const express = require('express')
 const mongooose = require('mongoose')
 
@@ -17,6 +16,7 @@ route.post('/', async (req,res) => {
                 pseudo: pseudo,
                 mail: mail,
                 password: password,
+                description: ''
             }
             const newUser = new User(user)
             newUser.save().then( result => {
@@ -47,24 +47,35 @@ route.get('/',(req,res) => {
             res.status(415).json('Cette adresse mail et ce mot de passe ne correspondent à aucun compte');
         }
         else{//login reussi
-            jwt.sign({user: doc}, "secretkey",(err,token) =>{
-                res.status(200).json({token,})
-            })   
+
+            const accessToken = jwt.sign({id: doc._id},process.env.ACCESS_TOKEN_SECRET )
+            res.status(200).json({accessToken}) 
         }
     })
 })
 
-route.post('/user', (req,res,next) =>{
-    jwt.verify(req.token,'secretkey',(err,authData) => {
-        if(err){
-            res.status(403).json('token unauthorizes')
-        } else {
-            res.json('post created'),
-            authData
-        }
+route.post('/user', verifyToken,(req,res,next) => {
+    console.log('reception d une requete post de description sur /user')
+    const description = req.body.description;
+    User.findByIdAndUpdate(req.id.id,{description: description},{useFindAndModify: true}).then((result) => {
+        res.status(200).json(description)
     })
-    
 })
+
+function verifyToken(req,res,next){
+    const authHeader = req.headers['authorization']
+    const token = authHeader && authHeader.split (' ')[1]
+    if (token ===  null) return res.status(401)
+
+    jwt.verify(token,process.env.ACCESS_TOKEN_SECRET, (err,id) => {
+        if (err) return res.status(403)
+        req.id = id
+    })
+    next()
+}
+
+
+
 
 
 
