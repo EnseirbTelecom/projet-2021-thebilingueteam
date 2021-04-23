@@ -1,15 +1,14 @@
 require('dotenv').config()
+
 const express = require('express')
+const app = express()
+
 const connectDB = require('./DB/connection.js')
-const app = express();
+connectDB()
 
-connectDB(); //connect
+app.use(express.json({extended: false}))
 
-app.use(express.json({extended: false}));
+app.use('/api', require('./Api/User'))
 
-app.use('/api', require('./Api/User'));
-
-
-const port = process.env.port || 9000;
-
-app.listen(port, () => console.log('Server Started on port '+ port));
+const port = process.env.PORT_SERVER
+app.listen(port, () => console.log('Server started on port '+ port))

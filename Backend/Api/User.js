@@ -7,6 +7,7 @@ const jwt = require('jsonwebtoken');
 const route = express.Router()
 
 route.post('/', async (req,res) => {
+    console.log('requete post')
     const {mail,pseudo,password} = req.body
     User.findOne({mail: mail}) //on vérifie si l'utilsateur est présent dans la BDD
     .then((doc) => {
