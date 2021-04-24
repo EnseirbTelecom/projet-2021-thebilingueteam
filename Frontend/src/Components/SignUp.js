@@ -13,7 +13,7 @@ import {
   Colors
 } from 'react-native/Libraries/NewAppScreen';
 
-class SignIn extends React.Component {
+class SignUp extends React.Component {
 
   render() {
     return (
@@ -28,22 +28,26 @@ class SignIn extends React.Component {
                 </View>
                 <View style={styles.inputView} >
                     <TextInput
+                        style={styles.inputText}
+                        placeholder="Username"
+                        placeholderTextColor="white"
+                        onChangeText={text => this.setState({username:text})}/>
+                </View>
+                <View style={styles.inputView} >
+                    <TextInput
                         secureTextEntry
                         style={styles.inputText}
                         placeholder="Password"
                         placeholderTextColor="white"
                         onChangeText={text => this.setState({password:text})}/>
                 </View>
-                <TouchableOpacity>
-                    <Text style={styles.forgot}>Forgot Password?</Text>
-                </TouchableOpacity>
 
                 <TouchableOpacity onPress={() => this.props.navigation.navigate('Home')} style={styles.loginBtn}>
-                   <Text style={styles.loginText}>LOGIN</Text>
+                   <Text style={styles.loginText}>Create Account</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity onPress={() => this.props.navigation.navigate('SignUp')}>
-                    <Text style={styles.forgot}>Sign up</Text>
+                <TouchableOpacity onPress={() => this.props.navigation.navigate('SignIn')}>
+                    <Text style={styles.forgot}>Sign In</Text>
                 </TouchableOpacity>
         </View>
     )
@@ -100,4 +104,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default SignIn
+export default SignUp

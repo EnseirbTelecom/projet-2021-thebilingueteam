@@ -4,6 +4,7 @@ import { StyleSheet, Text, View, Button } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Search from './Search'
 import UserPage from './UserPage'
+import HomePage from './HomePage'
 
 const Tab = createBottomTabNavigator();
 
@@ -14,6 +15,7 @@ class Home extends React.Component {
       <View style={{flex: 1}}>
             <Tab.Navigator>
               <Tab.Screen name="Search Page" component={Search} />
+              <Tab.Screen name="Home Page" component={HomePage} />
               <Tab.Screen name="User Page" component={UserPage} />
             </Tab.Navigator>
       </View>

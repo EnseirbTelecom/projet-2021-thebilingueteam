@@ -13,7 +13,9 @@ import {
 } from 'react-native';
 
 import SignIn from '../Components/SignIn'
+import SignUp from '../Components/SignUp'
 import Home from '../Components/Home'
+
 
 const Stack = createStackNavigator(); //Initialize stack
 
@@ -24,13 +26,24 @@ class Navigation extends React.Component {
       <NavigationContainer>
         <Stack.Navigator>
           <Stack.Screen
-            name="Sign In Page"
+            name="SignIn"
             component={SignIn}
+            options={{
+                headerShown: false
+            }}
+          />
+          <Stack.Screen
+            name="SignUp"
+            component={SignUp}
+            options={{
+                headerShown: false
+            }}
           />
           <Stack.Screen
             name="Home"
             component={Home}
             options={{
+                headerShown: false,
                 headerStyle: {
                   backgroundColor: 'white',
                 },
