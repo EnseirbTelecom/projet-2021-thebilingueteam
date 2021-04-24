@@ -56,10 +56,9 @@ route.get('/',(req,res) => {
 })
 
 route.post('/user', verifyToken,(req,res,next) => {
-    console.log('reception d une requete post de description sur /user')
     const description = req.body.description;
     User.findByIdAndUpdate(req.id.id,{description: description},{useFindAndModify: true}).then((result) => {
-        res.status(200).json(description)
+        res.status(200).json({description: description})
     })
 })
 
