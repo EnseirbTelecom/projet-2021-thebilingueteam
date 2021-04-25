@@ -38,7 +38,21 @@ class SignIn extends React.Component {
                     <Text style={styles.forgot}>Forgot Password?</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity onPress={() => this.props.navigation.navigate('Home')} style={styles.loginBtn}>
+                <TouchableOpacity onPress={() => {
+                    this.props.navigation.navigate('Home');
+
+                    const requestOptions = {
+                        method: 'GET',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ mail: this.state.email, password: this.state.password})
+                    }
+
+                    fetch("http://localhost:9000/api/", requestOptions)
+                    }}
+                
+            
+                
+                style={styles.loginBtn}>
                    <Text style={styles.loginText}>LOGIN</Text>
                 </TouchableOpacity>
 

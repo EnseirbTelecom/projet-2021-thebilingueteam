@@ -41,6 +41,7 @@ route.post('/', async (req,res) => {
 
 
 route.get('/',(req,res) => {
+    console.log('requete get')
     const {mail,password} = req.body
     User.findOne({mail:mail,password:password})
     .then((doc) =>{
@@ -50,7 +51,8 @@ route.get('/',(req,res) => {
         else{//login reussi
 
             const accessToken = jwt.sign({id: doc._id},process.env.ACCESS_TOKEN_SECRET )
-            res.status(200).json({accessToken}) 
+            console.log({token: accessToken});
+            res.status(200).json({token: accessToken}) 
         }
     })
 })

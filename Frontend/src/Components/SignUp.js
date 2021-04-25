@@ -42,7 +42,20 @@ class SignUp extends React.Component {
                         onChangeText={text => this.setState({password:text})}/>
                 </View>
 
-                <TouchableOpacity onPress={() => this.props.navigation.navigate('Home')} style={styles.loginBtn}>
+                <TouchableOpacity 
+                onPress={() => {
+                    this.props.navigation.navigate('Home');
+                
+                    const requestOptions = {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ mail: this.state.email, pseudo: this.state.username, password: this.state.password})
+                    }
+
+                    fetch("http://localhost:9000/api/", requestOptions)
+                            }}
+
+                    style={styles.loginBtn}>
                    <Text style={styles.loginText}>Create Account</Text>
                 </TouchableOpacity>
 
