@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
 const user = new mongoose.Schema({
+    _id: mongoose.Schema.Types.ObjectId,
     pseudo: {
         type: String
     },
@@ -8,6 +9,9 @@ const user = new mongoose.Schema({
         type: String
     },
     password: {
+        type: String
+    },
+    description: {
         type: String
     },
 });

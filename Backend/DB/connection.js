@@ -1,11 +1,13 @@
 const mongoose = require('mongoose');
 
-const url ='mongodb+srv://Timtim:cacahuetes22!@inpgram.vdanf.mongodb.net/myFirstDatabase?retryWrites=true&w=majority'
+const uri ='mongodb+srv://' + process.env.MONGO_ATLAS_USER + ':' + process.env.MONGO_ATLAS_PW + '!@inpgram.vdanf.mongodb.net/myFirstDatabase?retryWrites=true&w=majority'
+
 const connectDB = async() => {
-    await mongoose.connect(url,
+    await mongoose.connect(uri,
     {useUnifiedTopology: true,
-    useNewUrlParser: true });
-    console.log('db connected!...');
+    useNewUrlParser: true })
+    .then((result) => console.log('DB connected!...'))
+    .catch((err) => console.log(err));
 }
 
 module.exports = connectDB;
