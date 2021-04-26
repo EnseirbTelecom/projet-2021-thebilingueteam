@@ -2,7 +2,22 @@ const express = require('express')
 const mongooose = require('mongoose')
 
 const User = require('../DB/User')
-const jwt = require('jsonwebtoken');
+const jwt = require('jsonwebtoken')
+var multer = require('multer')
+
+var storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'uploads')
+    },
+    filename: (req, file, cb) => {
+        cb(null, file.fieldname + '-' + Date.now())
+    }
+})
+
+var fs = require('fs');
+var path = require('path');
+ 
+var upload = multer({ dest: '/Users/timotheeJanvier/Desktop/projet-2021-thebilingueteam/Backend/profilePicture' })
 
 const route = express.Router()
 
@@ -55,11 +70,14 @@ route.get('/',(req,res) => {
     })
 })
 
-route.post('/user', verifyToken,(req,res,next) => {
+route.post('/user/description', verifyToken,(req,res,next) => {
     const description = req.body.description;
     User.findByIdAndUpdate(req.id.id,{description: description},{useFindAndModify: true}).then((result) => {
         res.status(200).json({description: description})
     })
+})
+route.post('/user/profilepicture',verifyToken,(req,res,next) => {
+
 })
 
 function verifyToken(req,res,next){

@@ -6,7 +6,9 @@ const app = express()
 const connectDB = require('./DB/connection.js')
 connectDB()
 
-app.use(express.json({extended: false}))
+const bodyParser = require('body-parser');
+app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.json())
 
 app.use('/api', require('./Api/User'))
 
