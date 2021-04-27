@@ -61,7 +61,7 @@ route.post('/', async (req,res) => {
 
 
 route.get('/',(req,res) => {
-    const {mail,password} = req.body
+    const {mail,password} = req.headers
     User.findOne({mail:mail,password:password})
     .then((doc) =>{
         if(doc===null){//echec de login
