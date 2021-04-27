@@ -2,7 +2,25 @@ const express = require('express')
 const mongooose = require('mongoose')
 
 const User = require('../DB/User')
-const jwt = require('jsonwebtoken');
+
+const jwt = require('jsonwebtoken')
+
+var fs = require('fs');
+var path = require('path');
+
+const multer = require('multer')
+
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'uploads')
+    },
+    filename: (req, file, cb) => {
+        cb(null, file.fieldname + '-' + Date.now())
+    }
+})
+
+const upload = multer({ dest: '/Users/timotheeJanvier/Desktop/projet-2021-thebilingueteam/Backend/profilePicture' })
+ 
 
 const route = express.Router()
 
@@ -17,12 +35,14 @@ route.post('/', async (req,res) => {
                 pseudo: pseudo,
                 mail: mail,
                 password: password,
-                description: ''
             }
             const newUser = new User(user)
             newUser.save().then( result => {
                 console.log(result)
-                res.status(200).json(user)
+
+                const accessToken = jwt.sign({id: user._id},process.env.ACCESS_TOKEN_SECRET,  {expiresIn: process.env.TOKEN_EXPIRATION_TIME})
+                res.status(200).json({accessToken}) 
+
             })
             .catch((error) => {
                 console.log(error)
@@ -48,18 +68,26 @@ route.get('/',(req,res) => {
             res.status(415).json('Cette adresse mail et ce mot de passe ne correspondent à aucun compte');
         }
         else{//login reussi
-
-            const accessToken = jwt.sign({id: doc._id},process.env.ACCESS_TOKEN_SECRET )
-            console.log({token: accessToken});
-            res.status(200).json({token: accessToken}) 
+            const accessToken = jwt.sign({id: doc._id},process.env.ACCESS_TOKEN_SECRET,  {expiresIn: process.env.TOKEN_EXPIRATION_TIME})
+            res.status(200).json({accessToken}) 
         }
     })
 })
 
-route.post('/user', verifyToken,(req,res,next) => {
+route.post('/user/description', verifyToken,(req,res,next) => {
     const description = req.body.description;
     User.findByIdAndUpdate(req.id.id,{description: description},{useFindAndModify: true}).then((result) => {
         res.status(200).json({description: description})
+    })
+})
+route.post('/user/profilepicture',verifyToken,(req,res,next) => {
+    console.log('profile picture post request')
+    const profilePicture = {
+        data: fs.readFileSync(path.join(__dirname + '/uploads/'+ req.file.filename)),
+        contentType: 'iamge/png'
+    }
+    User.findByIdAndUpdate(req.id.id,{profilePicture: profilePicture},{useFindAndModify: true}).then((result) => {
+        res.status(200).json('profile Picture modified')
     })
 })
 
@@ -69,10 +97,13 @@ function verifyToken(req,res,next){
     if (token ===  null) return res.status(401)
 
     jwt.verify(token,process.env.ACCESS_TOKEN_SECRET, (err,id) => {
-        if (err) return res.status(403)
+        if (err) {
+            console.log(err)
+            return res.status(403).json('Reconnectez vous votre token est expiré')
+        } 
         req.id = id
+        next()
     })
-    next()
 }
 
 

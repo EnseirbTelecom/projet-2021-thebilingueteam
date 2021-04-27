@@ -14,6 +14,10 @@ const user = new mongoose.Schema({
     description: {
         type: String
     },
+    profilePicture: {
+        data: Buffer,
+        contentType: String
+    }
 });
 
 module.exports = User = mongoose.model('user', user);
