@@ -76,18 +76,29 @@ route.get('/',(req,res) => {
 
 route.post('/user/description', verifyToken,(req,res,next) => {
     const description = req.body.description;
-    User.findByIdAndUpdate(req.id.id,{description: description},{useFindAndModify: true}).then((result) => {
+    User.findByIdAndUpdate(req.id.id,{description: description},{useFindAndModify: true})
+    .then((result) => {
         res.status(200).json({description: description})
     })
 })
+
 route.post('/user/profilepicture',verifyToken,(req,res,next) => {
     console.log('profile picture post request')
     const profilePicture = {
         data: fs.readFileSync(path.join(__dirname + '/uploads/'+ req.file.filename)),
         contentType: 'iamge/png'
     }
-    User.findByIdAndUpdate(req.id.id,{profilePicture: profilePicture},{useFindAndModify: true}).then((result) => {
+    User.findByIdAndUpdate(req.id.id,{profilePicture: profilePicture},{useFindAndModify: true})
+    .then((result) => {
         res.status(200).json('profile Picture modified')
+    })
+})
+
+route.get('/users', verifyToken, (req,res,next) => {
+    console.log('liste des utilisateurs')
+    User.find({},).select('-password -mail -_id -__v')
+    .then((result) => {
+        res.status(200).json(result)
     })
 })
 
