@@ -6,7 +6,8 @@ import {
   View,
   TextInput,
   TouchableOpacity,
-  Button
+  Button,
+  Alert
 } from 'react-native';
 
 import {
@@ -14,6 +15,18 @@ import {
 } from 'react-native/Libraries/NewAppScreen';
 
 class SignUp extends React.Component {
+
+
+  constructor(props) {
+    super(props)
+    this.state = {
+        email: '',
+        username: '',
+        password: '',
+        token:'',
+    }
+  }
+
 
   render() {
     return (
@@ -24,14 +37,14 @@ class SignUp extends React.Component {
                         style={styles.inputText}
                         placeholder="Email"
                         placeholderTextColor="white"
-                        onChangeText={text => this.setState({email:text})}/>
+                        onChangeText={(email) => this.setState({email})}/>
                 </View>
                 <View style={styles.inputView} >
                     <TextInput
                         style={styles.inputText}
                         placeholder="Username"
                         placeholderTextColor="white"
-                        onChangeText={text => this.setState({username:text})}/>
+                        onChangeText={(username) => this.setState({username})}/>
                 </View>
                 <View style={styles.inputView} >
                     <TextInput
@@ -39,21 +52,37 @@ class SignUp extends React.Component {
                         style={styles.inputText}
                         placeholder="Password"
                         placeholderTextColor="white"
-                        onChangeText={text => this.setState({password:text})}/>
+                        onChangeText={(password) => this.setState({password})}/>
                 </View>
 
                 <TouchableOpacity 
                 onPress={() => {
-                    this.props.navigation.navigate('Home');
-                
-                    const requestOptions = {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ mail: this.state.email, pseudo: this.state.username, password: this.state.password})
-                    }
+                    console.log(this.state);
 
-                    fetch("http://localhost:9000/api/", requestOptions)
-                            }}
+
+                    fetch("http://192.168.1.78:9000/api", {
+                        method: 'POST',
+                        headers: {
+                            Accept: 'application/json',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            mail: this.state.email,
+                            pseudo: this.state.username,
+                            password: this.state.password,
+                        })
+                    })
+                    .then(response => response.json())
+                    .then((responseData) => {
+                        Alert.alert('Signup Success!');
+
+                        //this.props.navigation.navigate('Home');
+                    })
+                    .catch((error) => {
+                      console.error(error);
+                    });
+
+                }}
 
                     style={styles.loginBtn}>
                    <Text style={styles.loginText}>Create Account</Text>

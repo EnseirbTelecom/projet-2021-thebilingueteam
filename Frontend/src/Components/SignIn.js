@@ -13,9 +13,28 @@ import {
   Colors
 } from 'react-native/Libraries/NewAppScreen';
 
+import { connect } from 'react-redux'
+
+
 class SignIn extends React.Component {
 
+  constructor(props) {
+    super(props)
+    this.state = {
+        email: '',
+        password: '',
+        token: 'abc',
+    }
+  }
+
+  _handleAuth() {
+      console.log(this.state.token);
+      const action = { type: "ADD_TOKEN", value: this.state.email }
+      this.props.dispatch(action)
+  }
+
   render() {
+    console.log(this.props)
     return (
         <View style={styles.container}>
             <Text style={styles.logo}>INP GRAM</Text>
@@ -24,7 +43,7 @@ class SignIn extends React.Component {
                         style={styles.inputText}
                         placeholder="Email"
                         placeholderTextColor="white"
-                        onChangeText={text => this.setState({email:text})}/>
+                        onChangeText={(email) => this.setState({email})}/>
                 </View>
                 <View style={styles.inputView} >
                     <TextInput
@@ -32,9 +51,11 @@ class SignIn extends React.Component {
                         style={styles.inputText}
                         placeholder="Password"
                         placeholderTextColor="white"
-                        onChangeText={text => this.setState({password:text})}/>
+                        onChangeText={(password) => this.setState({password})}/>
                 </View>
-                <TouchableOpacity>
+                <TouchableOpacity
+                onPress={() => this._handleAuth()}
+                >
                     <Text style={styles.forgot}>Forgot Password?</Text>
                 </TouchableOpacity>
 
@@ -44,10 +65,18 @@ class SignIn extends React.Component {
                     const requestOptions = {
                         method: 'GET',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ mail: this.state.email, password: this.state.password})
+                        query: JSON.stringify({
+                            mail: this.state.email,
+                            password: this.state.password,
+                        })
                     }
 
-                    fetch("http://localhost:9000/api/", requestOptions)
+                    fetch("http://192.168.1.78:9000/api/", requestOptions)
+                    .then(response => response.json())
+                    .catch((error) => {
+                      console.error(error);
+                    });
+
                     }}
                 
             
@@ -114,4 +143,8 @@ const styles = StyleSheet.create({
     }
 });
 
-export default SignIn
+const mapStateToProps = (state) => {
+  return state
+}
+
+export default connect(mapStateToProps)(SignIn)

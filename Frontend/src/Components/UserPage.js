@@ -3,6 +3,8 @@ import { StyleSheet, Text, View, Button, Image, TouchableOpacity } from 'react-n
 
 import { Icon, Container, Content, Header, Left, Body, Right } from 'native-base'
 
+
+
 class UserPage extends React.Component {
 
 
@@ -67,5 +69,7 @@ class UserPage extends React.Component {
     )
   }
 }
+
+
 
 export default UserPage

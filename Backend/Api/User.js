@@ -24,6 +24,7 @@ const upload = multer({ dest: '/Users/timotheeJanvier/Desktop/projet-2021-thebil
 
 const route = express.Router()
 
+
 route.post('/', async (req,res) => {
     console.log('requete post')
     const {mail,pseudo,password} = req.body

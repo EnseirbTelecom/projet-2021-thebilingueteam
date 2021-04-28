@@ -6,19 +6,24 @@ import Search from './Search'
 import UserPage from './UserPage'
 import HomePage from './HomePage'
 
+import { Provider } from 'react-redux'
+import Store from '../Store/configureStore'
+
 const Tab = createBottomTabNavigator();
 
 class Home extends React.Component {
 
   render() {
     return (
-      <View style={{flex: 1}}>
-            <Tab.Navigator>
-              <Tab.Screen name="Search Page" component={Search} />
-              <Tab.Screen name="Home Page" component={HomePage} />
-              <Tab.Screen name="User Page" component={UserPage} />
-            </Tab.Navigator>
-      </View>
+        <Provider store={Store}>
+              <View style={{flex: 1}}>
+                    <Tab.Navigator>
+                      <Tab.Screen name="Search Page" component={Search} />
+                      <Tab.Screen name="Home Page" component={HomePage} />
+                      <Tab.Screen name="User Page" component={UserPage} />
+                    </Tab.Navigator>
+              </View>
+        </Provider>
 
     )
   }
