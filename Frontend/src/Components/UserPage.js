@@ -3,20 +3,31 @@ import { StyleSheet, Text, View, Button, Image, TouchableOpacity } from 'react-n
 
 import { Icon, Container, Content, Header, Left, Body, Right } from 'native-base'
 
+import { Provider } from 'react-redux'
+import Store from '../Store/configureStore'
+import { connect } from 'react-redux'
 
 
 class UserPage extends React.Component {
 
+  _handleAuth() {
+    const action = { type: "REMOVE_TOKEN", value: 'concombre' }
+    this.props.dispatch(action)
+  }
 
   render() {
     return (
+      <Provider store={Store}>
         <Container style={{ flex: 1, backgroundColor: 'white'}}>
           <Header style={{backgroundColor: 'white'}}>
 
             <Body><Text style={{fontWeight: 'bold'}}>Pablo Escobar</Text></Body>
             <Right>
               <TouchableOpacity
-              onPress={() => this.props.navigation.navigate('SignIn')}
+              onPress={() => {
+                this._handleAuth()
+                this.props.navigation.navigate('SignIn')
+              }}
               style={{ flex: 1, width:"80%", backgroundColor:"#fb5b5a", borderRadius:25, height:30, alignItems:"center", justifyContent:"center", marginTop:10, marginBottom:10 }}>
                  <Text style={{color: 'white'}}>Disconnection</Text>
               </TouchableOpacity>
@@ -50,7 +61,8 @@ class UserPage extends React.Component {
                   </View>
 
                   <View style={{ flexDirection: 'row' }}>
-                    <TouchableOpacity style={{ flex: 1, width:"80%", backgroundColor:"#fb5b5a", borderRadius:25, height:30, alignItems:"center", justifyContent:"center", marginTop:10, marginBottom:10 }}>
+                    <TouchableOpacity 
+                    style={{ flex: 1, width:"80%", backgroundColor:"#fb5b5a", borderRadius:25, height:30, alignItems:"center", justifyContent:"center", marginTop:10, marginBottom:10 }}>
                       <Text style={{color: 'white'}}>Edit Profile</Text>
                     </TouchableOpacity>
 
@@ -66,10 +78,15 @@ class UserPage extends React.Component {
             </View>
           </Content>
         </Container>
+      </Provider>
     )
   }
 }
 
 
 
-export default UserPage
+const mapStateToProps = (state) => {
+  return state
+}
+
+export default connect(mapStateToProps)(UserPage)

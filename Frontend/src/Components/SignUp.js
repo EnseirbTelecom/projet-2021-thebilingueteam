@@ -74,7 +74,7 @@ class SignUp extends React.Component {
                     })
                     .then(response => response.json())
                     .then((responseData) => {
-                        Alert.alert('Signup Success!');
+                        Alert.alert(responseData);
 
                         //this.props.navigation.navigate('Home');
                     })

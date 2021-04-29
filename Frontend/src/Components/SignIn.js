@@ -6,7 +6,8 @@ import {
   View,
   TextInput,
   TouchableOpacity,
-  Button
+  Button,
+  Alert
 } from 'react-native';
 
 import {
@@ -29,7 +30,7 @@ class SignIn extends React.Component {
 
   _handleAuth() {
       console.log(this.state.token);
-      const action = { type: "ADD_TOKEN", value: this.state.email }
+      const action = { type: "ADD_TOKEN", value: this.state.token }
       this.props.dispatch(action)
   }
 
@@ -53,26 +54,29 @@ class SignIn extends React.Component {
                         placeholderTextColor="white"
                         onChangeText={(password) => this.setState({password})}/>
                 </View>
-                <TouchableOpacity
-                onPress={() => this._handleAuth()}
-                >
+                <TouchableOpacity>
                     <Text style={styles.forgot}>Forgot Password?</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity onPress={() => {
-                    this.props.navigation.navigate('Home');
+                    //this.props.navigation.navigate('Home');
 
                     const requestOptions = {
                         method: 'GET',
-                        headers: { 'Content-Type': 'application/json' },
-                        query: JSON.stringify({
-                            mail: this.state.email,
-                            password: this.state.password,
-                        })
+                        headers: { 
+                            'Content-Type': 'application/json',
+                            'mail': this.state.email,
+                            'password': this.state.password,
+                        },
                     }
 
                     fetch("http://192.168.1.78:9000/api/", requestOptions)
                     .then(response => response.json())
+                    .then((responseData) => {
+                        this.setState({ token: responseData})
+                        this._handleAuth()
+                        this.props.navigation.navigate('Home')
+                    })
                     .catch((error) => {
                       console.error(error);
                     });

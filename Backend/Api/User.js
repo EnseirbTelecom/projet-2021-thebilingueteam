@@ -19,7 +19,7 @@ const storage = multer.diskStorage({
     }
 })
 
-const upload = multer({ dest: '/Users/timotheeJanvier/Desktop/projet-2021-thebilingueteam/Backend/profilePicture' })
+const upload = multer({ dest: '' })
  
 
 const route = express.Router()
@@ -62,15 +62,18 @@ route.post('/', async (req,res) => {
 
 
 route.get('/',(req,res) => {
+    console.log(req.headers)
     const {mail,password} = req.headers
     User.findOne({mail:mail,password:password})
     .then((doc) =>{
         if(doc===null){//echec de login
+            console.log('sign in failed')
             res.status(415).json('Cette adresse mail et ce mot de passe ne correspondent à aucun compte');
         }
         else{//login reussi
+            console.log('sign in suceed')
             const accessToken = jwt.sign({id: doc._id},process.env.ACCESS_TOKEN_SECRET,  {expiresIn: process.env.TOKEN_EXPIRATION_TIME})
-            res.status(200).json({accessToken}) 
+            res.status(200).json(accessToken) 
         }
     })
 })
