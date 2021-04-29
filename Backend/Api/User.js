@@ -19,7 +19,7 @@ const storage = multer.diskStorage({
     }
 })
 
-const upload = multer({ dest: '/Users/timotheeJanvier/Desktop/projet-2021-thebilingueteam/Backend/profilePicture' })
+const upload = multer({ dest: '' })
  
 
 const route = express.Router()
