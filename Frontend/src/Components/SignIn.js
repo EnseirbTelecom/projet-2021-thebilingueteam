@@ -13,6 +13,11 @@ import {
   Colors
 } from 'react-native/Libraries/NewAppScreen';
 
+const ip = () =>
+{
+ return 'localhost'
+}
+
 class SignIn extends React.Component {
 
   render() {
@@ -47,7 +52,7 @@ class SignIn extends React.Component {
                         body: JSON.stringify({ mail: this.state.email, password: this.state.password})
                     }
 
-                    fetch("http://localhost:9000/api/", requestOptions)
+                    fetch("http://"+ {ip} +":9000/api/", requestOptions)
                     }}
                 
             
