@@ -10,10 +10,43 @@ import { connect } from 'react-redux'
 
 class UserPage extends React.Component {
 
+  constructor(props) {
+    super(props)
+    this.state = {
+        username: '',
+        profilepic:'',
+        bio:'',
+    }
+}
+
   _handleAuth() {
     const action = { type: "REMOVE_TOKEN", value: 'concombre' }
     this.props.dispatch(action)
   }
+
+  getUserInfo(champ){
+    const requestOptions = {
+      method: 'GET',
+      headers: { 
+          'Authorization' : 'Bearer' + ' ' + this.props.authToken,
+          'Content-Type': 'application/json'
+      },
+    }
+
+    fetch("http://192.168.1.78:9000/api/user", requestOptions)
+    .then((response) => {    
+        return response.json();
+    })
+    .then((responseData) => {
+      //console.log(responseData[champ]);
+      this.setState({username: responseData[champ]});
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+
+  }
+  
 
   render() {
     return (
@@ -62,7 +95,11 @@ class UserPage extends React.Component {
 
                   <View style={{ flexDirection: 'row' }}>
                     <TouchableOpacity 
-                    onPress ={() => {console.log(this.props.authToken)}}
+                    onPress ={() => {
+                      console.log(this.props.authToken);
+                      this.getUserInfo('pseudo');
+                      console.log(this.state.username);
+                    }}
                     style={{ flex: 1, width:"80%", backgroundColor:"#fb5b5a", borderRadius:25, height:30, alignItems:"center", justifyContent:"center", marginTop:10, marginBottom:10 }}>
                       <Text style={{color: 'white'}}>Edit Profile</Text>
                     </TouchableOpacity>

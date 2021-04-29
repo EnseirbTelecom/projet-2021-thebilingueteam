@@ -106,9 +106,24 @@ route.get('/users', verifyToken, (req,res,next) => {
     })
 })
 
+route.get('/user',verifyToken,(req,res,next) => {
+    console.log('recuperation du profil utilisateur')
+    User.findById(req.id.id)
+    .then((result) => {
+        res.status(200).json(result)
+    })
+    .catch((err) =>{
+        console.log(err)
+        res.status(415).json(err)
+    })
+})
+
+
 function verifyToken(req,res,next){
     const authHeader = req.headers['authorization']
+    console.log(authHeader);
     const token = authHeader && authHeader.split (' ')[1]
+    console.log(token);
     if (token ===  null) return res.status(401)
 
     jwt.verify(token,process.env.ACCESS_TOKEN_SECRET, (err,id) => {
