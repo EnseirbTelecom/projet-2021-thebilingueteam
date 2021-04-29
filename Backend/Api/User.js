@@ -42,7 +42,7 @@ route.post('/', async (req,res) => {
                 console.log(result)
 
                 const accessToken = jwt.sign({id: user._id},process.env.ACCESS_TOKEN_SECRET,  {expiresIn: process.env.TOKEN_EXPIRATION_TIME})
-                res.status(200).json({accessToken}) 
+                res.status(200).json(accessToken) 
 
             })
             .catch((error) => {
