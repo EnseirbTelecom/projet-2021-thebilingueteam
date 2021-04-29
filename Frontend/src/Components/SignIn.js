@@ -13,82 +13,141 @@ import { connect } from 'react-redux'
 
 class SignIn extends React.Component {
 
-  constructor(props) {
-    super(props)
-    this.state = {
-        email: '',
-        password: '',
-        token: 'abc',
+    constructor(props) {
+        super(props)
+        this.state = {
+            email: '',
+            emailError: '',
+            password: '',
+            passwordError:'',
+            bddError: '',
+            token: '',
+        }
     }
-  }
 
-  _handleAuth() {
-      console.log(this.state.token);
-      const action = { type: "ADD_TOKEN", value: this.state.token }
-      this.props.dispatch(action)
-  }
+    _handleAuth() {
+        //console.log(this.state.token);
+        const action = { type: "ADD_TOKEN", value: this.state.token }
+        this.props.dispatch(action)
+    }
 
-  render() {
-    console.log(this.props)
-    return (
-        <View style={styles.container}>
-            <Text style={styles.logo}>INP GRAM</Text>
-                <View style={styles.inputView} >
-                    <TextInput
-                        style={styles.inputText}
-                        placeholder="Email"
-                        placeholderTextColor="white"
-                        onChangeText={(email) => this.setState({email})}/>
-                </View>
-                <View style={styles.inputView} >
-                    <TextInput
-                        secureTextEntry
-                        style={styles.inputText}
-                        placeholder="Password"
-                        placeholderTextColor="white"
-                        onChangeText={(password) => this.setState({password})}/>
-                </View>
-                <TouchableOpacity>
-                    <Text style={styles.forgot}>Forgot Password?</Text>
-                </TouchableOpacity>
 
-                <TouchableOpacity onPress={() => {
-                    //this.props.navigation.navigate('Home');
+    emailValidator(){
+        let reg = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        if (this.state.email == ''){
+            this.setState({ emailError: 'Ce champ ne doit pas être vide'});
+        }
+        else{
+            if (reg.test(this.state.email) === false) {
+                this.setState({ emailError: 'email invalide'});
+            }
+            else {
+                this.setState({ emailError: ''});
+                return true;
+            }
+        }   
+        return false;
+        }
 
-                    const requestOptions = {
-                        method: 'GET',
-                        headers: { 
-                            'Content-Type': 'application/json',
-                            'mail': this.state.email,
-                            'password': this.state.password,
-                        },
-                    }
 
-                    fetch("http://192.168.1.78:9000/api/", requestOptions)
-                    .then(response => response.json())
-                    .then((responseData) => {
-                        this.setState({ token: responseData})
-                        this._handleAuth()
-                        this.props.navigation.navigate('Home')
-                    })
-                    .catch((error) => {
-                      console.error(error);
-                    });
+    passwordValidator(){
+        if (this.state.password == ''){
+            this.setState({ passwordError: 'Ce champ ne doit pas être vide'});
+        }
+        else{
+            this.setState({ passwordError: ''});
+            return true;
+        }
+        return false;
+    }
 
+    accountExist(){
+        const requestOptions = {
+            method: 'GET',
+            headers: { 
+                'Content-Type': 'application/json',
+                'mail': this.state.email,
+                'password': this.state.password,
+            },
+        }
+
+        fetch("http://192.168.1.78:9000/api/", requestOptions)
+        .then((response) => {    
+            console.log(response.status); // Will show you the status
+            if (!response.ok) {
+                this.setState({bddError: 'Email ou mot de passe invalides'});
+            }
+            return response.json();
+        })
+        .then((responseData) => {
+            if (this.state.bddError == ''){
+                this.setState({ token: responseData})
+                this._handleAuth()
+                this.props.navigation.navigate('Home');
+                console.log('account exits')
+            }else{
+                console.log('account doesnt exits')
+            }
+        })
+        .catch((error) => {
+        console.error(error);
+        });
+    }
+
+    onSubmit(){
+        this.setState({bddError: ''});
+        const emailValid = this.emailValidator();
+        const passwordValid = this.passwordValidator();
+        if (emailValid == true && passwordValid == true){
+            console.log("Form is correct, let's verify the account exist in the database");
+            return true;
+        }
+        console.log("Form is incorrect");
+        return false;
+    }
+
+    render() {
+        return (
+            <View style={styles.container}>
+                <Text style={styles.logo}>INP GRAM</Text>
+                    <View style={styles.inputView} >
+                        <TextInput
+                            style={styles.inputText}
+                            placeholder="Email"
+                            placeholderTextColor="white"
+                            onChangeText={(email) => this.setState({email})}/>
+                    </View>
+                    <Text style={styles.validator}>{this.state.emailError}</Text>
+                    <View style={styles.inputView} >
+                        <TextInput
+                            secureTextEntry
+                            style={styles.inputText}
+                            placeholder="Password"
+                            placeholderTextColor="white"
+                            onChangeText={(password) => this.setState({password})}/>
+                    </View>
+                    <Text style={styles.validator}>{this.state.passwordError}</Text>
+                    <Text style={styles.validator}>{this.state.bddError}</Text>
+                    <TouchableOpacity>
+                        <Text style={styles.forgot}>Forgot Password?</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity onPress={() => {
+                        if (this.onSubmit() == true){
+                            this.accountExist();
+                        }
                     }}
-                
-            
-                
-                style={styles.loginBtn}>
-                   <Text style={styles.loginText}>LOGIN</Text>
-                </TouchableOpacity>
+                    
+                    style={styles.loginBtn}>
+                    <Text style={styles.loginText}>LOGIN</Text>
+                    </TouchableOpacity>
 
-                <TouchableOpacity onPress={() => this.props.navigation.navigate('SignUp')}>
-                    <Text style={styles.forgot}>Sign up</Text>
-                </TouchableOpacity>
-        </View>
-    )
-  }
+                    <TouchableOpacity onPress={() => this.props.navigation.navigate('SignUp')}>
+                        <Text style={styles.forgot}>Sign up</Text>
+                    </TouchableOpacity>
+            </View>
+        )
+    }
 
 }
 
@@ -121,7 +180,6 @@ const styles = StyleSheet.create({
         backgroundColor:"#900C3F",
         borderRadius:25,
         height:50,
-        marginBottom:20,
         justifyContent:"center",
         padding:20
     },
@@ -135,6 +193,11 @@ const styles = StyleSheet.create({
         justifyContent:"center",
         marginTop:40,
         marginBottom:10
+    },
+    validator:{
+        color:'red',
+        alignItems: 'center',
+        fontSize:15
     },
     loginText:{
         color:"white"

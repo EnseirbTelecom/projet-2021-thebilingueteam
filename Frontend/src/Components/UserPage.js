@@ -62,6 +62,7 @@ class UserPage extends React.Component {
 
                   <View style={{ flexDirection: 'row' }}>
                     <TouchableOpacity 
+                    onPress ={() => {console.log(this.props.authToken)}}
                     style={{ flex: 1, width:"80%", backgroundColor:"#fb5b5a", borderRadius:25, height:30, alignItems:"center", justifyContent:"center", marginTop:10, marginBottom:10 }}>
                       <Text style={{color: 'white'}}>Edit Profile</Text>
                     </TouchableOpacity>
