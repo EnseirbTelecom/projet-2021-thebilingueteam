@@ -3,10 +3,10 @@ import * as React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { Provider } from 'react-redux'
-import Store from './Store/configureStore'
+import Store from './src/Store/configureStore'
 
 
-import Navigation from './Navigation/Navigation'
+import Navigation from './src/Navigation/Navigation'
 
 const Stack = createStackNavigator(); //Initialize stack
 

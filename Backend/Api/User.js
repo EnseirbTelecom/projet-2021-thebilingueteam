@@ -78,6 +78,18 @@ route.get('/',(req,res) => {
     })
 })
 
+route.get('/user',verifyToken,(req,res,next) => {
+    console.log('recuperation du profil utilisateur')
+    User.findById(req.id.id)
+    .then((result) => {
+        res.status(200).json(result)
+    })
+    .catch((err) =>{
+        console.log(err)
+        res.status(415).json(err)
+    })
+})
+
 route.post('/user/description', verifyToken,(req,res,next) => {
     const description = req.body.description;
     User.findByIdAndUpdate(req.id.id,{description: description},{useFindAndModify: true})
