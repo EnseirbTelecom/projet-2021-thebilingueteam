@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { StyleSheet, Text, View, Button, Image, TouchableOpacity } from 'react-native';
 
 import { Icon, Container, Content, Header, Left, Body, Right } from 'native-base'
@@ -7,20 +7,37 @@ import { Provider } from 'react-redux'
 import Store from '../Store/configureStore'
 import { connect } from 'react-redux'
 import { TextInput } from 'react-native';
-
+import * as ImagePicker from 'expo-image-picker';
 
 class EditProfile extends React.Component {
     constructor(props){
     super(props)
     this.state = {
         username: '',
-        profilepic:'',
+        profilepic:'https://images.bfmtv.com/AFn-Kh1iHnrSraLWJEPT-KPs6SI=/40x3:584x309/640x0/images/-67818.jpg',
         bio: '',
     }
 }
+
 _handleEditProfile(){
 
 }
+
+choosePhoto(){
+    let result = ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    console.log(result);
+
+    if (!result.cancelled) {
+      this.setState({profilepic: result.uri});
+    }
+}
+
 sendUserBio(){
     fetch("http://localhost:9000/api/user/bio", {
                             method: 'POST',
@@ -32,6 +49,19 @@ sendUserBio(){
                                 bio: this.state.bio
                             })
                             })
+}
+sendUserPic(){
+    fetch("http://localhost:9000/api/user/pic", {
+                            method: 'POST',
+                            headers: {
+                                'Authorization' : 'Bearer' + ' ' + this.props.authToken,
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                pic: this.state.profilepic
+                            })
+                            })
+
 }
   render(){
       return(
@@ -53,12 +83,11 @@ sendUserBio(){
             </Header>
             <Body>
             <TouchableOpacity
-              onPress={() => {
-              }}>
+              onPress={() => this.choosePhoto()}>
                   <Image
                   style={{ width: 135, height: 135, borderRadius: 75, marginTop:50 }}
                   source={{
-                    uri: 'https://images.bfmtv.com/AFn-Kh1iHnrSraLWJEPT-KPs6SI=/40x3:584x309/640x0/images/-67818.jpg',
+                    uri: 'https://images.bfmtv.com/AFn-Kh1iHnrSraLWJEPT-KPs6SI=/40x3:584x309/640x0/images/-67818.jpg'
                   }}/>
             </TouchableOpacity>
 
@@ -72,7 +101,6 @@ sendUserBio(){
               onChangeText={(bio) => this.setState({bio})}
               style={{width: 300, borderRadius:5,borderWidth:'1', borderColor:'grey'}}></TextInput>
             </View>
-
               
 
             </Body>
