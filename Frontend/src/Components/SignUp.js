@@ -125,7 +125,7 @@ class SignUp extends React.Component {
                         if (this.onSubmit() == true){
                             console.log('Form sent to the server');
 
-                            fetch("http://192.168.1.78:9000/api", {
+                            fetch("http://localhost:9000/api/signup", {
                             method: 'POST',
                             headers: {
                                 Accept: 'application/json',

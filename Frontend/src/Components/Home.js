@@ -21,6 +21,8 @@ class Home extends React.Component {
                       <Tab.Screen name="Search Page" component={Search} />
                       <Tab.Screen name="Home Page" component={HomePage} />
                       <Tab.Screen name="User Page" component={UserPage} />
+                      
+
                     </Tab.Navigator>
               </View>
         </Provider>

@@ -15,6 +15,7 @@ import {
 import SignIn from '../Components/SignIn'
 import SignUp from '../Components/SignUp'
 import Home from '../Components/Home'
+import EditProfile from '../Components/EditProfile';
 
 
 const Stack = createStackNavigator(); //Initialize stack
@@ -42,6 +43,20 @@ class Navigation extends React.Component {
           <Stack.Screen
             name="Home"
             component={Home}
+            options={{
+                headerShown: false,
+                headerStyle: {
+                  backgroundColor: 'white',
+                },
+                headerTintColor: '#fb5b5a',
+                headerTitleStyle: {
+                  fontWeight: 'bold',
+                },
+            }}
+          />
+          <Stack.Screen
+            name="EditProfile"
+            component={EditProfile}
             options={{
                 headerShown: false,
                 headerStyle: {

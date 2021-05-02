@@ -25,7 +25,7 @@ const upload = multer({ dest: '' })
 const route = express.Router()
 
 
-route.post('/', async (req,res) => {
+route.post('/signup', async (req,res) => {
     console.log('requete post')
     const {mail,pseudo,password} = req.body
     User.findOne({mail: mail}) //on vérifie si l'utilsateur est présent dans la BDD
@@ -61,7 +61,7 @@ route.post('/', async (req,res) => {
 })
 
 
-route.get('/',(req,res) => {
+route.get('/login',(req,res) => {
     console.log(req.headers)
     const {mail,password} = req.headers
     User.findOne({mail:mail,password:password})
@@ -82,6 +82,7 @@ route.get('/user',verifyToken,(req,res,next) => {
     console.log('recuperation du profil utilisateur')
     User.findById(req.id.id)
     .then((result) => {
+        console.log(result)
         res.status(200).json(result)
     })
     .catch((err) =>{
@@ -90,11 +91,11 @@ route.get('/user',verifyToken,(req,res,next) => {
     })
 })
 
-route.post('/user/description', verifyToken,(req,res,next) => {
-    const description = req.body.description;
-    User.findByIdAndUpdate(req.id.id,{description: description},{useFindAndModify: true})
+route.post('/user/bio', verifyToken,(req,res,next) => {
+    const bio = req.body.bio;
+    User.findByIdAndUpdate(req.id.id,{bio: bio},{useFindAndModify: true})
     .then((result) => {
-        res.status(200).json({description: description})
+        res.status(200)
     })
 })
 

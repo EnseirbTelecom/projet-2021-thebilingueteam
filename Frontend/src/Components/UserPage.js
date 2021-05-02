@@ -3,6 +3,8 @@ import { StyleSheet, Text, View, Button, Image, TouchableOpacity } from 'react-n
 
 import { Icon, Container, Content, Header, Left, Body, Right } from 'native-base'
 
+import EditProfile from './EditProfile'
+
 import { Provider } from 'react-redux'
 import Store from '../Store/configureStore'
 import { connect } from 'react-redux'
@@ -13,9 +15,9 @@ class UserPage extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-        username: '',
+        username: this.getUserInfo('pseudo'),
         profilepic:'',
-        bio:'',
+        bio: this.getUserInfo('description'),
     }
 }
 
@@ -23,6 +25,7 @@ class UserPage extends React.Component {
     const action = { type: "REMOVE_TOKEN", value: 'concombre' }
     this.props.dispatch(action)
   }
+
 
   getUserInfo(champ){
     const requestOptions = {
@@ -33,12 +36,11 @@ class UserPage extends React.Component {
       },
     }
 
-    fetch("http://192.168.1.78:9000/api/user", requestOptions)
+    fetch("http://localhost:9000/api/user", requestOptions)
     .then((response) => {    
         return response.json();
     })
     .then((responseData) => {
-      //console.log(responseData[champ]);
       this.setState({username: responseData[champ]});
     })
     .catch((error) => {
@@ -49,12 +51,13 @@ class UserPage extends React.Component {
   
 
   render() {
+
     return (
       <Provider store={Store}>
         <Container style={{ flex: 1, backgroundColor: 'white'}}>
           <Header style={{backgroundColor: 'white'}}>
 
-            <Body><Text style={{fontWeight: 'bold'}}>Pablo Escobar</Text></Body>
+            <Body><Text style={{fontWeight: 'bold'}}>{this.state.username}</Text></Body>
             <Right>
               <TouchableOpacity
               onPress={() => {
@@ -96,9 +99,8 @@ class UserPage extends React.Component {
                   <View style={{ flexDirection: 'row' }}>
                     <TouchableOpacity 
                     onPress ={() => {
-                      console.log(this.props.authToken);
-                      this.getUserInfo('pseudo');
-                      console.log(this.state.username);
+                      this.props.navigation.navigate('EditProfile')
+                          
                     }}
                     style={{ flex: 1, width:"80%", backgroundColor:"#fb5b5a", borderRadius:25, height:30, alignItems:"center", justifyContent:"center", marginTop:10, marginBottom:10 }}>
                       <Text style={{color: 'white'}}>Edit Profile</Text>
@@ -110,7 +112,7 @@ class UserPage extends React.Component {
 
               <View style={{ paddingBottom: 10, paddingHorizontal: 10 }}>
                 <Text style={{ fontWeight: 'bold'}}> Pablo Escobar</Text>
-                <Text>Welcome on my instagram page, I am Pablo Escobar the great cocaine dealer!</Text>
+                <Text>{this.state.bio}</Text>
               </View>
 
             </View>
