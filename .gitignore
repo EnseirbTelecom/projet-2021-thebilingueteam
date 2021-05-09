@@ -1,2 +1,8 @@
 # macOS
 .DS_Store
+.watchmanconfig
+.prettierrc.js
+.flowconfig
+.buckconfig
+.editorconfig
+.eslintrc.js
