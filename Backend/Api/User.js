@@ -101,9 +101,9 @@ route.post('/user/bio', verifyToken,(req,res,next) => {
 
 route.post('/user/profilepicture',verifyToken,(req,res,next) => {
     console.log('profile picture post request')
+    console.log(req.body);
     const profilePicture = {
-        data: fs.readFileSync(path.join(__dirname + '/uploads/'+ req.file.filename)),
-        contentType: 'iamge/png'
+        data: fs.readFileSync(path.join(__dirname + '/uploads/'+ req.file)),
     }
     User.findByIdAndUpdate(req.id.id,{profilePicture: profilePicture},{useFindAndModify: true})
     .then((result) => {
