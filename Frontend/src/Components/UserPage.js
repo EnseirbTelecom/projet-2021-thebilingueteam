@@ -10,14 +10,16 @@ import Store from '../Store/configureStore'
 import { connect } from 'react-redux'
 
 
+
+
 class UserPage extends React.Component {
 
   constructor(props) {
     super(props)
     this.state = {
-        username: this.getUserInfo('pseudo'),
-        profilepic:'',
-        bio: this.getUserInfo('description'),
+        username: '',
+        profilepic: require('../img/default_profile.jpg'),
+        bio:'',
     }
 }
 
@@ -27,7 +29,12 @@ class UserPage extends React.Component {
   }
 
 
-  getUserInfo(champ){
+  componentDidMount() {
+    this.getUserInfo();
+  }
+
+  getUserInfo = async () => {
+
     const requestOptions = {
       method: 'GET',
       headers: { 
@@ -36,18 +43,13 @@ class UserPage extends React.Component {
       },
     }
 
-    fetch("http://localhost:9000/api/user", requestOptions)
-    .then((response) => {    
-        return response.json();
-    })
-    .then((responseData) => {
-      this.setState({username: responseData[champ]});
-    })
-    .catch((error) => {
-      console.error(error);
-    });
+    const response = await fetch("http://192.168.1.78:9000/api/user", requestOptions);
+    const json = await response.json();
+    console.log(json);
+    this.setState({username: json.pseudo});
 
-  }
+
+  };
   
 
   render() {
@@ -76,9 +78,9 @@ class UserPage extends React.Component {
                 <View style={{ flex:1, paddingLeft: 5, justifyContent: 'space-around'  }}>
                   <Image
                   style={{ width: 75, height: 75, borderRadius: 37.5 }}
-                  source={{
-                    uri: 'https://images.bfmtv.com/AFn-Kh1iHnrSraLWJEPT-KPs6SI=/40x3:584x309/640x0/images/-67818.jpg',
-                  }}/>
+                  source={
+                    this.state.profilepic
+                  }/>
                 </View>
                 <View style={{ flex:3 }}>
                   <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
@@ -100,7 +102,8 @@ class UserPage extends React.Component {
                     <TouchableOpacity 
                     onPress ={() => {
                       this.props.navigation.navigate('EditProfile')
-                          
+                      console.log(this.props.authToken);
+                      console.log(this.state.username);
                     }}
                     style={{ flex: 1, width:"80%", backgroundColor:"#fb5b5a", borderRadius:25, height:30, alignItems:"center", justifyContent:"center", marginTop:10, marginBottom:10 }}>
                       <Text style={{color: 'white'}}>Edit Profile</Text>
@@ -111,8 +114,8 @@ class UserPage extends React.Component {
               </View>
 
               <View style={{ paddingBottom: 10, paddingHorizontal: 10 }}>
-                <Text style={{ fontWeight: 'bold'}}> Pablo Escobar</Text>
-                <Text>{this.state.bio}</Text>
+                <Text style={{ fontWeight: 'bold'}}>{this.state.username}</Text>
+                <Text>Welcome on my instagram page, I am Pablo Escobar the great cocaine dealer!</Text>
               </View>
 
             </View>
