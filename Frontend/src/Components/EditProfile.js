@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import { StyleSheet, Text, View, Button, Image, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, Button, Image, TouchableOpacity,Alert } from 'react-native';
 
 import { Icon, Container, Content, Header, Left, Body, Right } from 'native-base'
 
@@ -9,13 +9,18 @@ import { connect } from 'react-redux'
 import { TextInput } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 
+
+
+
+
 class EditProfile extends React.Component {
     constructor(props){
     super(props)
     this.state = {
         username: '',
         profilePictureURI:'https://images.bfmtv.com/AFn-Kh1iHnrSraLWJEPT-KPs6SI=/40x3:584x309/640x0/images/-67818.jpg',
-        bio: '',
+        PP: '',
+        bio: ''
     }
 }
 
@@ -24,50 +29,42 @@ _handleEditProfile(){
 }
 
 async choosePhoto(){
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
+  let image = await ImagePicker.launchImageLibraryAsync({
+    mediaTypes: ImagePicker.MediaTypeOptions.Images,
+    allowsEditing: true,
+    aspect: [3, 3],
+    quality: 1,
+    base64: true,
+  })
+  this.setState({PP: image})
+  this.setState({profilePictureURI: image.uri})
 
-    if (!result.cancelled){
-      this.setState({profilePictureURI: result.uri})
-    }
 }
 
 sendUserBio(){
-
-    fetch("http://localhost:9000/api/user/bio", {
-                            method: 'POST',
-                            headers: {
-                                'Authorization' : 'Bearer' + ' ' + this.props.authToken,
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify({
-                                bio: this.state.bio
-                            })
-                            })
+  fetch("http://localhost:9000/api/user/bio", {
+      method: 'POST',
+      headers: {
+        'Authorization' : 'Bearer' + ' ' + this.props.authToken,
+         'Content-Type': 'application/json'
+        },
+      body: JSON.stringify({
+        bio: this.state.bio
+        })
+    })
 }
 
 async sendUserPic(){
-  const response = await fetch(this.state.profilePictureURI);
-  const blob = await response.blob();
-  console.log(blob);  
-
-  const data = new FormData();
-  data.append('profilePicture', response);
-
-  const req = {
+  fetch("http://localhost:9000/api/user/profilePicture", {
     method: 'POST',
     headers: {
-        'Authorization' : 'Bearer' + ' ' + this.props.authToken,
-        'Content-Type': 'multipart/form-data'
+      'Authorization' : 'Bearer' + ' ' + this.props.authToken,
+      'Content-Type': 'application/json'
     },
-    body:data
-  }
-  fetch("http://localhost:9000/api/user/profilePicture", req)                         
+    body: JSON.stringify({
+      imgsource: this.state.PP.base64
+    })
+  })                         
 }
   render(){
       return(
@@ -79,7 +76,7 @@ async sendUserPic(){
               <TouchableOpacity
               onPress={() => {
                 this.sendUserBio();
-                //this.sendUserPic();
+                this.sendUserPic();
                 this.props.navigation.navigate('User Page');
 
               }}

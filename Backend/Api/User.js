@@ -5,24 +5,11 @@ const User = require('../DB/User')
 
 const jwt = require('jsonwebtoken')
 
-var fs = require('fs');
-var path = require('path');
-
-const multer = require('multer')
-
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, 'uploads')
-    },
-    filename: (req, file, cb) => {
-        cb(null, file.fieldname + '-' + Date.now())
-    }
-})
-
-const upload = multer({ dest: '' })
- 
+const bodyParser = require('body-parser')
+const fs = require('fs')
 
 const route = express.Router()
+
 
 
 route.post('/signup', async (req,res) => {
@@ -101,14 +88,11 @@ route.post('/user/bio', verifyToken,(req,res,next) => {
 
 route.post('/user/profilepicture',verifyToken,(req,res,next) => {
     console.log('profile picture post request')
-    console.log(req.body);
-    const profilePicture = {
-        data: fs.readFileSync(path.join(__dirname + '/uploads/'+ req.file)),
-    }
-    User.findByIdAndUpdate(req.id.id,{profilePicture: profilePicture},{useFindAndModify: true})
-    .then((result) => {
-        res.status(200).json('profile Picture modified')
-    })
+    console.log(req.body.imgsource)
+    fs.writeFile('./out.png', req.body.imgsource, 'base64', (err) => {
+        if (err) throw err
+      })
+      res.status(200)
 })
 
 route.get('/users', verifyToken, (req,res,next) => {

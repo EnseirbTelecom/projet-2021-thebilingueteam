@@ -7,8 +7,8 @@ const connectDB = require('./DB/connection.js')
 connectDB()
 
 const bodyParser = require('body-parser');
-app.use(bodyParser.urlencoded({ extended: false }))
-app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ limit: "50MB", extended: true, parameterLimit:50000}));
+app.use(bodyParser.json({ limit: '50MB' }))
 
 app.set("view engine", "ejs");
 
