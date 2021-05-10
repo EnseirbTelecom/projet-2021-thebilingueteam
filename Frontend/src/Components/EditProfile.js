@@ -100,7 +100,7 @@ async sendUserPic(){
               placeholder='Bio'
               placeholderTextColor="grey"
               onChangeText={(bio) => this.setState({bio})}
-              style={{width: 300, borderRadius:5,borderWidth:'1', borderColor:'grey'}}></TextInput>
+              style={{width: 300, borderRadius:5,borderWidth: 1, borderColor:'grey'}}></TextInput>
             </View>
             </Body>
             </Container>
