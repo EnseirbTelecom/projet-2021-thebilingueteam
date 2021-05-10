@@ -21,7 +21,7 @@ class UserPage extends React.Component {
         profilepic: require('../img/default_profile.jpg'),
         bio:'',
     }
-}
+  }
 
   _handleAuth() {
     const action = { type: "REMOVE_TOKEN", value: 'concombre' }
@@ -47,8 +47,6 @@ class UserPage extends React.Component {
     const json = await response.json();
     console.log(json);
     this.setState({username: json.pseudo});
-
-
   };
   
 

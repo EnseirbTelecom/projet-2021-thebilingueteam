@@ -95,6 +95,18 @@ route.post('/user/profilepicture',verifyToken,(req,res,next) => {
       res.status(200)
 })
 
+route.post('/user/post',verifyToken,(req,res,next) => {
+    console.log('New post request')
+    console.log(req.body.imgsource)
+    console.log(req.body)
+    fs.writeFile('./out.png', req.body.imgsource, 'base64', (err) => {
+		if (err) throw err
+	})
+
+    res.status(200)
+})
+
+
 route.get('/users', verifyToken, (req,res,next) => {
     console.log('liste des utilisateurs')
     User.find({},).select('-password -mail -_id -__v')

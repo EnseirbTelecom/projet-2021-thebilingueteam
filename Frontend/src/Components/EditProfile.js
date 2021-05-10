@@ -42,7 +42,7 @@ async choosePhoto(){
 }
 
 sendUserBio(){
-  fetch("http://localhost:9000/api/user/bio", {
+  fetch("http://192.168.1.78:9000/api/user/bio", {
       method: 'POST',
       headers: {
         'Authorization' : 'Bearer' + ' ' + this.props.authToken,
@@ -55,7 +55,7 @@ sendUserBio(){
 }
 
 async sendUserPic(){
-  fetch("http://localhost:9000/api/user/profilePicture", {
+  fetch("http://192.168.1.78:9000/api/user/profilePicture", {
     method: 'POST',
     headers: {
       'Authorization' : 'Bearer' + ' ' + this.props.authToken,
@@ -66,6 +66,7 @@ async sendUserPic(){
     })
   })                         
 }
+
   render(){
       return(
           <Provider store={Store}>

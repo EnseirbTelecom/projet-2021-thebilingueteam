@@ -4,6 +4,9 @@ import { Text, View, Image, StyleSheet, TextInput, TouchableOpacity } from 'reac
 import { Button } from 'native-base'
 
 import * as ImagePicker from 'expo-image-picker';
+import { Provider } from 'react-redux'
+import Store from '../Store/configureStore'
+import { connect } from 'react-redux'
 
 
 class AddPic extends React.Component {
@@ -12,6 +15,7 @@ class AddPic extends React.Component {
     this.state = { 
       
         image: '', 
+        image64: '',
         title: '', 
         description: '',
     }
@@ -26,21 +30,19 @@ class AddPic extends React.Component {
     }
 
     onSubmit = async () => {
-        try {
-          const post = {
-            photo: this.state.image,
-            title: this.state.title,
-            description: this.state.description
-          }
-    
-          this.setState({
-            image: null,
-            title: '',
-            description: ''
-          })
-        } catch (e) {
-          console.error(e)
-        }
+
+        fetch("http://192.168.1.78:9000/api/posts/post", {
+        method: 'POST',
+        headers: {
+          'Authorization' : 'Bearer' + ' ' + this.props.authToken,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          imgsource: "data:image/png;base64," + this.state.image64,
+          title: this.state.title,
+          description: this.state.description,        
+        })
+      })          
     }
   
   
@@ -54,11 +56,16 @@ class AddPic extends React.Component {
         base64: true,
       })
 
-      this.setState({image: selectedImage.uri})
+      this.setState({image: selectedImage.uri});
+      this.setState({image64: selectedImage.base64});
+
+      
     }
+
   
     render() {
         return (
+          <Provider store={Store}>
             <View style={{flex: 1}}>
 
                 <View style={{ alignItems: 'center', justifyContent:'space-between'}}>
@@ -98,7 +105,7 @@ class AddPic extends React.Component {
                 <View style={{ alignItems: 'center'}}>
                     {this.state.image ? (
                         <TouchableOpacity
-                            onPress={this.selectImage}
+                            onPress={this.onSubmit}
                             style={styles.postBtn}
                         >
                             <Text style={styles.loginText}>Add Post</Text>
@@ -107,11 +114,9 @@ class AddPic extends React.Component {
                         <Text></Text>
                         )}
                 </View>
-                
-
-
 
             </View>
+          </Provider>
         )
     }
 }
@@ -164,4 +169,9 @@ const styles = StyleSheet.create({
 
 });
   
-export default AddPic
+
+const mapStateToProps = (state) => {
+  return state
+}
+
+export default connect(mapStateToProps)(AddPic)
