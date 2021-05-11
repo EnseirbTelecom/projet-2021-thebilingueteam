@@ -81,7 +81,7 @@ route.get('/user',verifyToken,(req,res,next) => {
 })
 
 route.post('/user/bio', verifyToken,(req,res,next) => {
-    const bio = req.body.bio;
+    const bio = req.body.bio
     User.findByIdAndUpdate(req.id.id,{bio: bio},{useFindAndModify: true})
     .then((result) => {
         res.status(200)
@@ -90,11 +90,14 @@ route.post('/user/bio', verifyToken,(req,res,next) => {
 
 route.post('/user/profilepicture',verifyToken,(req,res,next) => {
     console.log('profile picture post request')
-    console.log(req.body.imgsource)
-    fs.writeFile('./out.png', req.body.imgsource, 'base64', (err) => {
-        if (err) throw err
-      })
-      res.status(200)
+    strProfilePicture = req.body.imgsource
+        User.findByIdAndUpdate(req.id.id,{profilePicture: req.body.imgsource},{useFindAndModify: true})
+    .then((result) => {
+        res.status(200)
+    })
+    .catch((err)=>{
+        res.status(500).json(err)
+    })
 })
 
 route.post('/user/post',verifyToken,(req,res,next) => {
