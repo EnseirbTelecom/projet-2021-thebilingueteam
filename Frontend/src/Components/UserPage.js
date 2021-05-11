@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState,useEffect} from 'react';
 import { StyleSheet, Text, View, Button, Image, TouchableOpacity } from 'react-native';
 
 import { Icon, Container, Content, Header, Left, Body, Right } from 'native-base'
@@ -12,59 +12,48 @@ import { connect } from 'react-redux'
 
 
 
-class UserPage extends React.Component {
+function UserPage(props) {
 
-  constructor(props) {
-    super(props)
-    this.state = {
-        username: '',
-        profilepic: require('../img/default_profile.jpg'),
-        bio:'',
-    }
-}
+const [username, setUserName] = useState('');
 
-  _handleAuth() {
+const [profilePictureURI, setProfilePictureURI] = useState('https://t4.ftcdn.net/jpg/03/46/93/61/360_F_346936114_RaxE6OQogebgAWTalE1myseY1Hbb5qPM.jpg');
+const [bio,setBio] = useState('');
+
+useEffect(() => {
+  getUserInfo();
+})
+
+  const _handleAuth = () => {
     const action = { type: "REMOVE_TOKEN", value: 'concombre' }
-    this.props.dispatch(action)
+    props.dispatch(action)
   }
 
-
-  componentDidMount() {
-    this.getUserInfo();
-  }
-
-  getUserInfo = async () => {
+  const getUserInfo = async () => {
 
     const requestOptions = {
       method: 'GET',
       headers: { 
-          'Authorization' : 'Bearer' + ' ' + this.props.authToken,
+          'Authorization' : 'Bearer' + ' ' + props.authToken,
           'Content-Type': 'application/json'
       },
     }
-
-    const response = await fetch("http://192.168.1.78:9000/api/user", requestOptions);
+    const response = await fetch("http://10.168.255.53:9000/api/user", requestOptions);
     const json = await response.json();
     console.log(json);
-    this.setState({username: json.pseudo});
-
-
+    setUserName(json.pseudo);
+    setBio(json.bio);
+    setProfilePictureURI(json.profilePicture)
   };
-  
-
-  render() {
-
     return (
       <Provider store={Store}>
         <Container style={{ flex: 1, backgroundColor: 'white'}}>
           <Header style={{backgroundColor: 'white'}}>
-
-            <Body><Text style={{fontWeight: 'bold'}}>{this.state.username}</Text></Body>
+            <Body><Text style={{fontWeight: 'bold'}}>{username}</Text></Body>
             <Right>
               <TouchableOpacity
               onPress={() => {
-                this._handleAuth()
-                this.props.navigation.navigate('SignIn')
+                _handleAuth()
+                props.navigation.navigate('SignIn')
               }}
               style={{ flex: 1, width:"80%", backgroundColor:"#fb5b5a", borderRadius:25, height:30, alignItems:"center", justifyContent:"center", marginTop:10, marginBottom:10 }}>
                  <Text style={{color: 'white'}}>Disconnection</Text>
@@ -78,9 +67,7 @@ class UserPage extends React.Component {
                 <View style={{ flex:1, paddingLeft: 5, justifyContent: 'space-around'  }}>
                   <Image
                   style={{ width: 75, height: 75, borderRadius: 37.5 }}
-                  source={
-                    this.state.profilepic
-                  }/>
+                  source={{uri: profilePictureURI}}/>
                 </View>
                 <View style={{ flex:3 }}>
                   <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
@@ -101,9 +88,8 @@ class UserPage extends React.Component {
                   <View style={{ flexDirection: 'row' }}>
                     <TouchableOpacity 
                     onPress ={() => {
-                      this.props.navigation.navigate('EditProfile')
-                      console.log(this.props.authToken);
-                      console.log(this.state.username);
+                      props.navigation.navigate('EditProfile',{authToken: props.authToken,bio: bio, uri: profilePictureURI, setBio: setBio,setURI: setProfilePictureURI})
+                      console.log(props.authToken);
                     }}
                     style={{ flex: 1, width:"80%", backgroundColor:"#fb5b5a", borderRadius:25, height:30, alignItems:"center", justifyContent:"center", marginTop:10, marginBottom:10 }}>
                       <Text style={{color: 'white'}}>Edit Profile</Text>
@@ -114,17 +100,16 @@ class UserPage extends React.Component {
               </View>
 
               <View style={{ paddingBottom: 10, paddingHorizontal: 10 }}>
-                <Text style={{ fontWeight: 'bold'}}>{this.state.username}</Text>
-                <Text>Welcome on my instagram page, I am Pablo Escobar the great cocaine dealer!</Text>
+                <Text style={{ fontWeight: 'bold'}}>{username}</Text>
+                <Text>{bio}</Text>
               </View>
-
             </View>
           </Content>
         </Container>
       </Provider>
     )
-  }
 }
+
 
 
 

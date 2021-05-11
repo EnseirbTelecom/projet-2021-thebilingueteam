@@ -23,9 +23,7 @@ class Home extends React.Component {
                       <Tab.Screen name="Home Page" component={HomePage} />
                       <Tab.Screen name="AddPic Page" component={AddPic} />
                       <Tab.Screen name="User Page" component={UserPage} />
-                      
-
-                    </Tab.Navigator>
+                    </Tab.Navigator>  
               </View>
         </Provider>
 

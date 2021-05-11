@@ -1,5 +1,5 @@
 import 'react-native-gesture-handler';
-import * as React from 'react';
+import React, {useState} from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -21,11 +21,10 @@ import EditProfile from '../Components/EditProfile';
 const Stack = createStackNavigator(); //Initialize stack
 
 
-class Navigation extends React.Component {
-  render() {
+function Navigation(){
     return (
       <NavigationContainer>
-        <Stack.Navigator>
+        <Stack.Navigator initialRouteName='SignIn'>
           <Stack.Screen
             name="SignIn"
             component={SignIn}
@@ -71,7 +70,7 @@ class Navigation extends React.Component {
         </Stack.Navigator>
       </NavigationContainer>
     )
-  }
+  
 }
 
 export default Navigation

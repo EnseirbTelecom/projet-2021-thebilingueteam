@@ -2,17 +2,17 @@ import React from 'react';
 import { Text, View, Image, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
 
 import { Button } from 'native-base'
-import * as ImagePicker from "react-native-image-picker"
 
+import * as ImagePicker from 'expo-image-picker';
 
 
 class AddPic extends React.Component {
-    
-    state = { 
-        image: null, 
+state = { 
+        image:'',
         title: '', 
         description: '',
     }
+  
 
     onChangeTitle = (title) => {
       this.setState({ title })
@@ -41,13 +41,19 @@ class AddPic extends React.Component {
     }
   
   
-    selectImage = () => {
+    selectImage = async () => {
 
-      const options = {
-        noData: true
-      }
+      let selectedImage = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [3, 3],
+        quality: 1,
+        base64: true,
+      })
 
-      ImagePicker.launchImageLibrary(options, response => {
+      this.setState({image: selectedImage.uri})
+
+      {/*ImagePicker.launchImageLibraryAsync(options, response => {
         if (response.didCancel) {
           console.log('User cancelled image picker')
         } else if (response.error) {
@@ -61,17 +67,17 @@ class AddPic extends React.Component {
             image: source
           })
         }
-      })
+      })*/}
     }
   
     render() {
         return (
             <View style={{flex: 1}}>
 
-                <View style={{ alignItems: 'center'}}>
+                <View style={{ alignItems: 'center', justifyContent:'space-between'}}>
                     {this.state.image ? (
                     <Image
-                        source={this.state.image}
+                        source={{uri: this.state.image}}
                         style={{ width: '100%', height: 200 }}
                     />
                     ) : (
