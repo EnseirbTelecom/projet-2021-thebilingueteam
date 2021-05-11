@@ -24,7 +24,7 @@ route.post('/signup', async (req,res) => {
                 mail: mail,
                 password: password,
                 userPP: 'https://www.clipartkey.com/mpngs/m/152-1520367_user-profile-default-image-png-clipart-png-download.png',
-                bio: 'Edit your profile to add a description'
+                bio: ''
             }
             const newUser = new User(user)
             newUser.save().then( result => {
