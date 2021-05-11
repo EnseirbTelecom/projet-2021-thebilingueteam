@@ -25,10 +25,13 @@ route.post('/posts/post',verifyToken,(req,res,next) => {
     console.log('New post request')
     console.log(req.body)
 
-    const {imgsource, title, description} = req.body
+    const { imgsource, title, description, date, userPP, username } = req.body
     const post = {
         _id: new mongooose.Types.ObjectId(),
         userId: req.id.id,
+        date: date,
+        userPP: userPP,
+        username: username,
         imgsource: imgsource,
         title: title,
         description: description
