@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, Button, Image, TouchableOpacity } from 'react-native';
-
+import {Dimensions, StyleSheet, Text, View, Button, Image, TouchableOpacity } from 'react-native';
 import { Icon, Container, Content, Header, Left, Body, Right } from 'native-base'
+const vw = Dimensions.get('screen').width;
+const vh = Dimensions.get('screen').height;
 
 import EditProfile from './EditProfile'
 
@@ -16,9 +17,10 @@ function UserPage(props) {
 
   const [username, setUserName] = useState('');
   const [isLoading, setisLoading] = useState(true);
-
   const [profilePictureURI, setProfilePictureURI] = useState('https://t4.ftcdn.net/jpg/03/46/93/61/360_F_346936114_RaxE6OQogebgAWTalE1myseY1Hbb5qPM.jpg');
   const [bio, setBio] = useState('');
+
+  const [posts, setPosts] = useState([])
 
   useEffect(() => {
     getUserInfo();
@@ -38,7 +40,7 @@ function UserPage(props) {
         'Content-Type': 'application/json'
       },
     }
-    const response = await fetch("http://192.168.1.78:9000/api/user", requestOptions);
+    const response = await fetch("http://192.168.24.238:9000/api/user", requestOptions);
     const json = await response.json();
     console.log(json);
     setUserName(json.pseudo);
@@ -46,6 +48,22 @@ function UserPage(props) {
     setProfilePictureURI(json.userPP);
     setisLoading(false);
   };
+
+  const getUserPosts = async () =>{
+    const requestOptions = {
+      method: 'GET',
+      headers: {
+          'Content-Type': 'application/json'
+      },
+  }
+
+  const response = await fetch("http://192.168.24.238:9000/api/posts/user", requestOptions);
+  const json = await response.json();
+  console.log(json);
+
+  this.setState({ datasource: json });
+  this.setState({ loading: false })
+  }
 
   return (
     <Provider store={Store}>
@@ -69,7 +87,6 @@ function UserPage(props) {
                 </TouchableOpacity>
               </Right>
             </Header>
-
             <Content>
               <View>
                 <View style={{ flexDirection: 'row' }}>
@@ -117,6 +134,11 @@ function UserPage(props) {
                   )}
                 </View>
               </View>
+              <Container style={{display:'flex',flexDirection:'row', flexWrap:'wrap',backgroundColor: 'grey'}}>
+              <View style={{height:0.33*vw,width:0.33*vw,backgroundColor:'red'}}>
+              </View>
+              
+              </Container>
             </Content>
           </Container>
       )}  
