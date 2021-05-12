@@ -14,7 +14,7 @@ const route = express.Router()
 
 route.get('/posts', (req, res) =>{
     console.log('liste des posts')
-    posts.find()
+    posts.find().sort({date: -1})
     .then((result) => {
         res.status(200).json(result)
     })

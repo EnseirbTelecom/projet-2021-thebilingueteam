@@ -34,13 +34,14 @@ class AddPic extends React.Component {
     let date = new Date().getDate();
     let month = new Date().getMonth() + 1;
     let year = new Date().getFullYear();
+    let hours = new Date().getHours();
+    let minutes = new Date().getMinutes();
 
-    this.setState({ date: date + '-' + month + '-' + year });
+    this.setState({ date: date + '/' + month + '/' + year + '   ' + hours + ':' + minutes });
   }
 
 
   componentDidMount() {
-    this.getCurrentDate();
     this.getUserInfo();
   }
 
@@ -84,6 +85,7 @@ class AddPic extends React.Component {
 
 
   selectImage = async () => {
+    this.getCurrentDate();
 
     let selectedImage = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -142,7 +144,9 @@ class AddPic extends React.Component {
           <View style={{ alignItems: 'center' }}>
             {this.state.image ? (
               <TouchableOpacity
-                onPress={this.onSubmit}
+                onPress={
+                  this.onSubmit
+                }
                 style={styles.postBtn}
               >
                 <Text style={styles.loginText}>Add Post</Text>

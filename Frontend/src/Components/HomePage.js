@@ -15,8 +15,12 @@ class HomePage extends React.Component {
             description: '',
             imgsource: '',
             datasource: [],
+            refreshing: false,
         }
     }
+
+
+
 
 
     renderItem = ({ item }) => {
@@ -24,7 +28,7 @@ class HomePage extends React.Component {
             <Card>
                 <CardItem>
                     <Left>
-                        <Thumbnail source={{ uri: item.userPP }} />
+                        <Thumbnail source={ item.userPP ? { uri: item.userPP } : null} />
                         <Body>
                             <Text>{item.username}</Text>
                             <Text note>{item.date}</Text>
@@ -33,7 +37,7 @@ class HomePage extends React.Component {
                 </CardItem>
                 <CardItem cardBody>
                     <Image
-                        source={{ uri: item.imgsource }}
+                        source={ item.imgsource ? { uri: item.imgsource } : null}
                         style={{ height: 200, width: null, flex: 1 }}
                     />
                 </CardItem>
@@ -48,6 +52,7 @@ class HomePage extends React.Component {
     }
 
     componentDidMount() {
+        console.log(this.state.refreshing);
         this.getPosts();
     }
 
@@ -65,10 +70,17 @@ class HomePage extends React.Component {
         console.log(json);
 
         this.setState({ datasource: json });
-        this.setState({ loading: false })
+        this.setState({ loading: false, refreshing: false })
 
-    };
+    }
 
+    _handleRefresh = () => {
+        this.setState({
+            refreshing: true,
+        }, () => {
+            this.getPosts();
+        })
+    }
 
     render() {
         return (
@@ -84,6 +96,12 @@ class HomePage extends React.Component {
                             data={this.state.datasource}
                             renderItem={this.renderItem}
                             keyExtractor={(item, index) => index.toString()}
+                            refreshControl={
+                                <RefreshControl
+                                  refreshing={this.state.refreshing}
+                                  onRefresh={this._handleRefresh}
+                                />
+                            }
                         />
                     </View>
                 )}
