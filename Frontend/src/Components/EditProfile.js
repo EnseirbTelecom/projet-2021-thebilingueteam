@@ -12,7 +12,6 @@ import * as ImagePicker from 'expo-image-picker';
 function EditProfile({ route, navigation }) {
 
   const { authToken, bio, uri, setBio, setURI } = route.params;
-
   const [inputURI, setInputURI] = useState(uri);
   const [inputBio, setInputBio] = useState(bio);
 
@@ -24,11 +23,12 @@ function EditProfile({ route, navigation }) {
       quality: 1,
       base64: true,
     })
-    setInputURI("data:image/png;base64," + image.base64)
+    const uriB64 = "data:image/png;base64," + image.base64
+    setInputURI(uriB64)
   }
 
   const sendUserBio = () => {
-    fetch("http://192.168.1.78:9000/api/user/bio", {
+    fetch("http://10.168.255.53:9000/api/user/bio", {
       method: 'POST',
       headers: {
         'Authorization': 'Bearer' + ' ' + authToken,
@@ -41,7 +41,7 @@ function EditProfile({ route, navigation }) {
   }
 
   const sendUserPic = () => {
-    fetch("http://192.168.1.78:9000/api/user/profilePicture", {
+    fetch("http://10.168.255.53:9000/api/user/profilePicture", {
       method: 'POST',
       headers: {
         'Authorization': 'Bearer' + ' ' + authToken,
@@ -50,7 +50,8 @@ function EditProfile({ route, navigation }) {
       body: JSON.stringify({
         imgsource: inputURI
       })
-    })
+
+    }).then((res) => console.log(json.res))
   }
   return (
     <Provider store={Store}>
@@ -63,7 +64,7 @@ function EditProfile({ route, navigation }) {
                 sendUserBio();
                 sendUserPic();
                 setBio(inputBio);
-                setInputURI(inputURI);
+                setURI(inputURI);
                 navigation.navigate('User Page');
               }}
               style={{ flex: 1, width: "80%", backgroundColor: "#fb5b5a", borderRadius: 25, height: 30, alignItems: "center", justifyContent: "center", marginTop: 10, marginBottom: 10 }}>

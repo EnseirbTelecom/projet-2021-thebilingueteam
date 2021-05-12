@@ -91,7 +91,7 @@ route.post('/user/bio', verifyToken,(req,res,next) => {
 route.post('/user/profilepicture',verifyToken,(req,res,next) => {
     console.log('profile picture post request')
     strProfilePicture = req.body.imgsource
-        User.findByIdAndUpdate(req.id.id,{profilePicture: req.body.imgsource},{useFindAndModify: true})
+        User.findByIdAndUpdate(req.id.id,{userPP: req.body.imgsource},{useFindAndModify: true})
     .then((result) => {
         res.status(200)
     })
