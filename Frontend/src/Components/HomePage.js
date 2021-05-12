@@ -2,6 +2,8 @@ import React from 'react';
 import { StyleSheet, Text, View, Image, FlatList, RefreshControl } from 'react-native';
 
 import { Button, Icon, Card, CardItem, Thumbnail, Header, Left, Body, Right } from 'native-base'
+import { CirclesLoader, PulseLoader, TextLoader, DotsLoader } from 'react-native-indicator'
+
 
 class HomePage extends React.Component {
 
@@ -72,10 +74,10 @@ class HomePage extends React.Component {
         return (
             <View>
                 {this.state.loading ? (
-                    <View>
-                        <Text>Loading ... </Text>
+                    <View style={{ alignItems: "center", justifyContent: "center", marginTop: 250 }}>
+                        <CirclesLoader color='#fb5b5a' />
+                        <TextLoader text="Loading" color='#fb5b5a' />
                     </View>
-
                 ) : (
                     <View>
                         <FlatList

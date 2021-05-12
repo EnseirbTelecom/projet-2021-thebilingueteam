@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, Button, Image, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, Button, Image, TouchableOpacity } from 'react-native'
 
 import { Icon, Container, Content, Header, Left, Body, Right } from 'native-base'
 
-import EditProfile from './EditProfile'
 
 import { Provider } from 'react-redux'
 import Store from '../Store/configureStore'
 import { connect } from 'react-redux'
+import { CirclesLoader, PulseLoader, TextLoader, DotsLoader } from 'react-native-indicator'
 
 
 
@@ -52,7 +52,10 @@ function UserPage(props) {
     
       {isLoading === true ? (
         
-        <Text>Loading...</Text>
+        <View style={{ alignItems: "center", justifyContent: "center", marginTop: 250 }}>
+            <CirclesLoader color='#fb5b5a' />
+            <TextLoader text="Loading" color='#fb5b5a'/>
+        </View>
         
       ) : (
           <Container style={{ flex: 1, backgroundColor: 'white' }}>
