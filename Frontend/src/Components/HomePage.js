@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, Image, FlatList, RefreshControl } from 'react-native';
+import { StyleSheet, Text, View, Image, FlatList, RefreshControl, TouchableOpacity } from 'react-native';
 
 import { Button, Icon, Card, CardItem, Thumbnail, Header, Left, Body, Right } from 'native-base'
 import { CirclesLoader, PulseLoader, TextLoader, DotsLoader } from 'react-native-indicator'
@@ -16,11 +16,10 @@ class HomePage extends React.Component {
             imgsource: '',
             datasource: [],
             refreshing: false,
+            count: 1,
+            end: false,
         }
     }
-
-
-
 
 
     renderItem = ({ item }) => {
@@ -61,22 +60,54 @@ class HomePage extends React.Component {
         const requestOptions = {
             method: 'GET',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'offset': this.state.count,
             },
         }
 
         const response = await fetch("http://192.168.1.78:9000/api/posts", requestOptions);
-        const json = await response.json();
-        console.log(json);
 
-        this.setState({ datasource: json });
-        this.setState({ loading: false, refreshing: false })
+        if (!response.ok){
+            console.log('fin de la liste');
+            this.setState({ end: true });
+        } else {
+            const json = await response.json();
+            this.setState({ datasource: this.state.datasource.concat(json) });
+            this.setState({ loading: false, refreshing: false });
+        }
 
+        console.log('end get podtst');
+        
+
+    }
+
+    _handleLoadMore = () => {
+        console.log('LOAD MORE')
+        this.setState({ count: this.state.count + 1 }, () => {this.getPosts()});
+        console.log(this.state.datasource.length)
+    }
+
+    _handleFooterComponent = () => {
+        return (
+            <View>
+                {this.state.end ? (
+                    <Text>c'est la fin!</Text>
+                ) : (
+                    <View style={{ alignItems: "center", justifyContent: "center"}}>
+                        <DotsLoader color='#fb5b5a' />
+                    </View>
+                )}
+            </View>
+        )
     }
 
     _handleRefresh = () => {
         this.setState({
+            count: 1,
             refreshing: true,
+            loading: true,
+            end: false,
+            datasource: [],
         }, () => {
             this.getPosts();
         })
@@ -96,14 +127,19 @@ class HomePage extends React.Component {
                             data={this.state.datasource}
                             renderItem={this.renderItem}
                             keyExtractor={(item, index) => index.toString()}
+                            onEndReached={this._handleLoadMore}
+                            onEndReachedThreshold={0.1}
                             refreshControl={
                                 <RefreshControl
                                   refreshing={this.state.refreshing}
                                   onRefresh={this._handleRefresh}
                                 />
                             }
+                            ListFooterComponent={this._handleFooterComponent()}
                         />
+
                     </View>
+
                 )}
 
             </View>

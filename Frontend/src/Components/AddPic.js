@@ -19,6 +19,7 @@ class AddPic extends React.Component {
       date: '',
       username: '',
       userPP: '',
+      time: '',
     }
   }
 
@@ -30,14 +31,28 @@ class AddPic extends React.Component {
     this.setState({ description })
   }
 
+  checkTime = (i) => {
+    if (i < 10) {
+      i = "0" + i;
+    }
+    return i;
+  }
+
   getCurrentDate = () => {
     let date = new Date().getDate();
     let month = new Date().getMonth() + 1;
     let year = new Date().getFullYear();
     let hours = new Date().getHours();
     let minutes = new Date().getMinutes();
+    let time = new Date().getTime();
 
-    this.setState({ date: date + '/' + month + '/' + year + '   ' + hours + ':' + minutes });
+    m = this.checkTime(minutes);
+    mo = this.checkTime(month);
+
+    this.setState({ 
+      date: date + '/' + mo + '/' + year + '   ' + hours + ':' + m,
+      time: time,
+  });
   }
 
 
@@ -76,6 +91,7 @@ class AddPic extends React.Component {
         date: this.state.date,
         userPP: this.state.userPP,
         username: this.state.username,
+        time: this.state.time,
       })
     })
 
