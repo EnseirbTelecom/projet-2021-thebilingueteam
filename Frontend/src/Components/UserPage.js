@@ -9,6 +9,7 @@ import EditProfile from './EditProfile'
 import { Provider } from 'react-redux'
 import Store from '../Store/configureStore'
 import { connect } from 'react-redux'
+import { CirclesLoader, PulseLoader, TextLoader, DotsLoader } from 'react-native-indicator'
 
 
 
@@ -106,7 +107,10 @@ function UserPage(props) {
     
       {isLoading === true ? (
         
-        <Text>Loading...</Text>
+        <View style={{ alignItems: "center", justifyContent: "center", marginTop: 250 }}>
+            <CirclesLoader color='#fb5b5a' />
+            <TextLoader text="Loading" color='#fb5b5a'/>
+        </View>
         
       ) : (
           <Container style={{ flex: 1, backgroundColor: 'white' }}>

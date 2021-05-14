@@ -6,6 +6,9 @@ const posts = new mongoose.Schema({
     userId: {
         type: String
     },
+    time: {
+        type: String
+    },
     date: {
         type: String
     },
