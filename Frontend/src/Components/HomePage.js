@@ -18,6 +18,7 @@ class HomePage extends React.Component {
             refreshing: false,
             count: 1,
             end: false,
+            datasrcSuggest: [],
         }
     }
 
@@ -27,7 +28,7 @@ class HomePage extends React.Component {
             <Card>
                 <CardItem>
                     <Left>
-                        <Thumbnail source={ item.userPP ? { uri: item.userPP } : null} />
+                        <Thumbnail source={item.userPP ? { uri: item.userPP } : null} />
                         <Body>
                             <Text>{item.username}</Text>
                             <Text note>{item.date}</Text>
@@ -36,7 +37,7 @@ class HomePage extends React.Component {
                 </CardItem>
                 <CardItem cardBody>
                     <Image
-                        source={ item.imgsource ? { uri: item.imgsource } : null}
+                        source={item.imgsource ? { uri: item.imgsource } : null}
                         style={{ height: 200, width: null, flex: 1 }}
                     />
                 </CardItem>
@@ -44,6 +45,34 @@ class HomePage extends React.Component {
                     <Body>
                         <Text>{item.title}</Text>
                         <Text>{item.description}</Text>
+                    </Body>
+                </CardItem>
+            </Card>
+        )
+    }
+
+    renderItemSuggest = ({ item }) => {
+        return (
+            <Card>
+                <CardItem>
+                    <Body>
+                        <Image
+                            style={{ width: 45, height: 45, borderRadius: 37.5 }}
+                            source={item.userPP ? { uri: item.userPP } : null} />
+                    </Body>
+                </CardItem>
+                <CardItem>
+                    <Body>
+                        <Text>{item.username}</Text>
+                    </Body>
+                </CardItem>
+                <CardItem>
+                    <Body>
+                        <TouchableOpacity
+                            style={styles.followButton}
+                            onPress={() => console.log('youpi')}>
+                            <Text style={styles.followText}>Follow</Text>
+                        </TouchableOpacity>
                     </Body>
                 </CardItem>
             </Card>
@@ -67,7 +96,7 @@ class HomePage extends React.Component {
 
         const response = await fetch("http://192.168.1.78:9000/api/posts", requestOptions);
 
-        if (!response.ok){
+        if (!response.ok) {
             console.log('fin de la liste');
             this.setState({ end: true });
         } else {
@@ -77,13 +106,13 @@ class HomePage extends React.Component {
         }
 
         console.log('end get podtst');
-        
+
 
     }
 
     _handleLoadMore = () => {
         console.log('LOAD MORE')
-        this.setState({ count: this.state.count + 1 }, () => {this.getPosts()});
+        this.setState({ count: this.state.count + 1 }, () => { this.getPosts() });
         console.log(this.state.datasource.length)
     }
 
@@ -91,9 +120,14 @@ class HomePage extends React.Component {
         return (
             <View>
                 {this.state.end ? (
-                    <Text>c'est la fin!</Text>
+                    <FlatList
+                        data={this.state.datasource}
+                        renderItem={this.renderItemSuggest}
+                        keyExtractor={(item, index) => index.toString()}
+                        horizontal={true}
+                    />
                 ) : (
-                    <View style={{ alignItems: "center", justifyContent: "center"}}>
+                    <View style={{ alignItems: "center", justifyContent: "center" }}>
                         <DotsLoader color='#fb5b5a' />
                     </View>
                 )}
@@ -131,8 +165,8 @@ class HomePage extends React.Component {
                             onEndReachedThreshold={0.1}
                             refreshControl={
                                 <RefreshControl
-                                  refreshing={this.state.refreshing}
-                                  onRefresh={this._handleRefresh}
+                                    refreshing={this.state.refreshing}
+                                    onRefresh={this._handleRefresh}
                                 />
                             }
                             ListFooterComponent={this._handleFooterComponent()}
@@ -146,5 +180,21 @@ class HomePage extends React.Component {
         )
     }
 }
+
+
+
+const styles = StyleSheet.create({
+    followButton: {
+        width: "100%",
+        backgroundColor: "#fb5b5a",
+        borderRadius: 10,
+        height: 45,
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    followText: {
+        color: "white",
+    }
+});
 
 export default HomePage

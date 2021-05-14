@@ -18,7 +18,7 @@ route.get('/posts', (req, res) =>{
     const {offset} = req.headers;
     console.log(req.headers);
     console.log(offset)
-    posts.find().sort({time: -1}).skip(10*(Number(offset)-1)).limit(10, function (e, d) {})
+    posts.find().sort({time: -1}).skip(2*(Number(offset)-1)).limit(2, function (e, d) {})
     .then((result) => {
         console.log(result);
         console.log(result.length);
