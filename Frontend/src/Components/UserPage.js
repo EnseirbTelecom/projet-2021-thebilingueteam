@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import {Dimensions, StyleSheet, Text, View, Button, Image, TouchableOpacity } from 'react-native';
-import { Icon, Container, Content, Header, Left, Body, Right } from 'native-base'
+import {Dimensions, StyleSheet, Text, View, Button, Image, TouchableOpacity,FlatList } from 'react-native';
+import { Icon, Card, CardItem, Thumbnail, Container, Content, Header, Left, Body, Right } from 'native-base'
 const vw = Dimensions.get('screen').width;
 const vh = Dimensions.get('screen').height;
 
@@ -19,13 +19,50 @@ function UserPage(props) {
   const [isLoading, setisLoading] = useState(true);
   const [profilePictureURI, setProfilePictureURI] = useState('https://t4.ftcdn.net/jpg/03/46/93/61/360_F_346936114_RaxE6OQogebgAWTalE1myseY1Hbb5qPM.jpg');
   const [bio, setBio] = useState('');
-
-  const [posts, setPosts] = useState([])
+  const [postNumber,setPostNumber] = useState(0)
+  const [posts, setPosts] = useState([]);
 
   useEffect(() => {
-    getUserInfo();
-  })
+    getUserInfo(); // we get user profile
+  },[])
 
+  useEffect(() => {
+    getUserPosts(); //we get user posts once we got usernanme
+  },[username]);
+
+  useEffect(()=> {
+    setPostNumber(posts.length);
+    setisLoading(false); //once we got all the posts
+  },[posts])
+
+  const renderItem = ({ item }) => {
+    return (
+      <Card>
+      <CardItem>
+          <Left>
+              <Thumbnail source={{ uri: item.userPP }} />
+              <Body>
+                  <Text>{item.username}</Text>
+                  <Text note>{item.date}</Text>
+              </Body>
+          </Left>
+      </CardItem>
+      <CardItem cardBody>
+          <Image
+              source={{ uri: item.imgsource }}
+              style={{ height: 200, width: null, flex: 1 }}
+          />
+      </CardItem>
+      <CardItem>
+          <Body>
+              <Text>{item.title}</Text>
+              <Text>{item.description}</Text>
+          </Body>
+      </CardItem>
+  </Card>  
+    )
+  }
+ 
   const _handleAuth = () => {
     const action = { type: "REMOVE_TOKEN", value: 'concombre' }
     props.dispatch(action)
@@ -40,29 +77,28 @@ function UserPage(props) {
         'Content-Type': 'application/json'
       },
     }
-    const response = await fetch("http://192.168.24.238:9000/api/user", requestOptions);
+    const response = await fetch("http://10.168.255.53:9000/api/user", requestOptions);
     const json = await response.json();
-    console.log(json);
     setUserName(json.pseudo);
     setBio(json.bio);
     setProfilePictureURI(json.userPP);
-    setisLoading(false);
   };
 
   const getUserPosts = async () =>{
+    console.log(username);
     const requestOptions = {
       method: 'GET',
       headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'username': username
       },
   }
 
-  const response = await fetch("http://192.168.24.238:9000/api/posts/user", requestOptions);
+  const response = await fetch("http://10.168.255.53:9000/api/posts/user", requestOptions);
   const json = await response.json();
   console.log(json);
-
-  this.setState({ datasource: json });
-  this.setState({ loading: false })
+  console.log('jai recu les posts')
+  setPosts(json);
   }
 
   return (
@@ -98,7 +134,7 @@ function UserPage(props) {
                   <View style={{ flex: 3 }}>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
                       <View style={{ alignItems: 'center' }}>
-                        <Text>20</Text>
+                        <Text>{postNumber}</Text>
                         <Text style={{ fontSize: 10, color: 'grey' }}>posts</Text>
                       </View>
                       <View style={{ alignItems: 'center' }}>
@@ -134,11 +170,11 @@ function UserPage(props) {
                   )}
                 </View>
               </View>
-              <Container style={{display:'flex',flexDirection:'row', flexWrap:'wrap',backgroundColor: 'grey'}}>
-              <View style={{height:0.33*vw,width:0.33*vw,backgroundColor:'red'}}>
-              </View>
-              
-              </Container>
+                <FlatList
+                data={posts}
+                renderItem={renderItem}
+                keyExtractor={(item, index) => index.toString()}/>
+            
             </Content>
           </Container>
       )}  
