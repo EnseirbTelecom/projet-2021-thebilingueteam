@@ -127,6 +127,21 @@ route.get('/user',verifyToken,(req,res,next) => {
     })
 })
 
+route.get('/user/search',(req,res,next) => {
+    console.log('New search request')
+    const {pseudo} = req.headers
+    User.findOne({pseudo: pseudo})
+    .then((doc) =>{
+        if(doc===null){//echec la recherche
+            console.log('user does not exist')
+            res.status(415).json('Ce nom d\'utilisateur ne correspondent à aucun compte');
+        }
+        else{//recherche réussie
+            console.log('search suceed')
+        }
+    })
+})
+
 
 function verifyToken(req,res,next){
     const authHeader = req.headers['authorization']
