@@ -143,6 +143,7 @@ route.get('/user/search',(req,res,next) => {
         }
         else{//recherche réussie
             console.log('search suceed')
+            res.status(200).json(doc)
         }
     })
 })

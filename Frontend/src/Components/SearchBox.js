@@ -10,82 +10,40 @@ import {
     TouchableOpacity,
     TextInput, Image
 } from 'react-native';
+import { SearchBar } from 'react-native-elements';
 
 export default function Searchbar({ value,updateSearch, style }) {
 
     const [query, setQuery] = useState();
     const [username, setUsername] = useState();
     return (
-        <View style={[styles.container, style]}>
-            <View style={styles.searchContainer}>
-                <View style={styles.vwSearch}>
-                    <Image
-                        style={styles.icSearch}
-                        source={require('../img/magnGlass.png')} />
-                </View>
-
-                <TextInput  
-                            value={query}
-                            style={styles.inputText}
-                            placeholder="Search user..."
-                            placeholderTextColor="black"
-                            onChangeText={(text) => {
-                                setQuery(text)
-                                updateSearch(text)
-                                
-
-                                  }
-
-                                }
-                            />
-                {
-                    query ?
-
-                        <TouchableOpacity
-                            onPress={() =>setQuery('')}
-                            style={styles.vwClear}>
-                            <Image
-                                style={styles.icClear}
-                                source={require('../img/del.png')} />
-                        </TouchableOpacity>
-                        : <View style={styles.vwClear} />
-}
-            </View>
-        </View >
+        <SafeAreaView style={{ flex: 1 }}>
+          <SearchBar
+            round
+            searchIcon={{ size: 24 }}
+            value={query}
+            placeholder="Search user..."
+            placeholderTextColor="white"
+            containerStyle={styles.container}
+            inputStyle={styles.input}
+            platform={Platform.OS}
+            onChangeText={(text) => {
+            setQuery(text)
+            updateSearch(text)
+             }
+            }
+          />
+      </SafeAreaView>
     )
 }
+
 const styles = StyleSheet.create({
-
-    icClear: {
-        justifyContent: 'flex-end',
-        alignItems: 'flex-end',
-    },
-    
-    textInput: {
-        flex: 1,
-    },
-
-    vwSearch: {
-        flex: 0.2,
-        justifyContent: 'center',
-        alignItems: 'center',
-        // width: 40,
-        // backgroundColor: 'red'
-    },
-    icSearch: {
-        height: 18, width: 18
-    },
-    searchContainer:
-    {
-        backgroundColor: 'white',
-        width: '90%',
-        height: 40,
-        flexDirection: 'row'
-
-    },
     container: {
-        height: 80,
-        alignItems: 'center',
-        // height: '100%', width: '100%' 
+      backgroundColor: '#900C3F',
     },
-});
+
+    input: {
+        backgroundColor: '#fb5b5a',
+        borderRadius:15,
+    }
+  });
