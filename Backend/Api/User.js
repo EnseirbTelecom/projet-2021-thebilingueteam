@@ -23,6 +23,8 @@ route.post('/signup', async (req,res) => {
                 pseudo: pseudo,
                 mail: mail,
                 password: password,
+                userPP: 'https://www.clipartkey.com/mpngs/m/152-1520367_user-profile-default-image-png-clipart-png-download.png',
+                bio: ''
             }
             const newUser = new User(user)
             newUser.save().then( result => {
@@ -79,7 +81,7 @@ route.get('/user',verifyToken,(req,res,next) => {
 })
 
 route.post('/user/bio', verifyToken,(req,res,next) => {
-    const bio = req.body.bio;
+    const bio = req.body.bio
     User.findByIdAndUpdate(req.id.id,{bio: bio},{useFindAndModify: true})
     .then((result) => {
         res.status(200)
@@ -88,11 +90,14 @@ route.post('/user/bio', verifyToken,(req,res,next) => {
 
 route.post('/user/profilepicture',verifyToken,(req,res,next) => {
     console.log('profile picture post request')
-    console.log(req.body.imgsource)
-    fs.writeFile('./out.png', req.body.imgsource, 'base64', (err) => {
-        if (err) throw err
-      })
-      res.status(200)
+    strProfilePicture = req.body.imgsource
+        User.findByIdAndUpdate(req.id.id,{userPP: req.body.imgsource},{useFindAndModify: true})
+    .then((result) => {
+        res.status(200)
+    })
+    .catch((err)=>{
+        res.status(500).json(err)
+    })
 })
 
 route.post('/user/post',verifyToken,(req,res,next) => {

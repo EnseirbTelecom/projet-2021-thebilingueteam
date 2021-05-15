@@ -1,91 +1,200 @@
 import React from 'react';
-import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, Image, FlatList, RefreshControl, TouchableOpacity } from 'react-native';
 
 import { Button, Icon, Card, CardItem, Thumbnail, Header, Left, Body, Right } from 'native-base'
+import { CirclesLoader, PulseLoader, TextLoader, DotsLoader } from 'react-native-indicator'
+
 
 class HomePage extends React.Component {
 
     constructor(props) {
         super(props)
         this.state = {
+            loading: true,
             title: '',
             description: '',
             imgsource: '',
+            datasource: [],
+            refreshing: false,
+            count: 1,
+            end: false,
+            datasrcSuggest: [],
         }
     }
 
+
+    renderItem = ({ item }) => {
+        return (
+            <Card>
+                <CardItem>
+                    <Left>
+                        <Thumbnail source={item.userPP ? { uri: item.userPP } : null} />
+                        <Body>
+                            <Text>{item.username}</Text>
+                            <Text note>{item.date}</Text>
+                        </Body>
+                    </Left>
+                </CardItem>
+                <CardItem cardBody>
+                    <Image
+                        source={item.imgsource ? { uri: item.imgsource } : null}
+                        style={{ height: 200, width: null, flex: 1 }}
+                    />
+                </CardItem>
+                <CardItem>
+                    <Body>
+                        <Text>{item.title}</Text>
+                        <Text>{item.description}</Text>
+                    </Body>
+                </CardItem>
+            </Card>
+        )
+    }
+
+    renderItemSuggest = ({ item }) => {
+        return (
+            <Card>
+                <CardItem>
+                    <Body>
+                        <Image
+                            style={{ width: 45, height: 45, borderRadius: 37.5 }}
+                            source={item.userPP ? { uri: item.userPP } : null} />
+                    </Body>
+                </CardItem>
+                <CardItem>
+                    <Body>
+                        <Text>{item.username}</Text>
+                    </Body>
+                </CardItem>
+                <CardItem>
+                    <Body>
+                        <TouchableOpacity
+                            style={styles.followButton}
+                            onPress={() => console.log('youpi')}>
+                            <Text style={styles.followText}>Follow</Text>
+                        </TouchableOpacity>
+                    </Body>
+                </CardItem>
+            </Card>
+        )
+    }
+
     componentDidMount() {
+        console.log(this.state.refreshing);
         this.getPosts();
     }
 
     getPosts = async () => {
 
         const requestOptions = {
-          method: 'GET',
-          headers: { 
-              'Content-Type': 'application/json'
-          },
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'offset': this.state.count,
+            },
         }
-    
-        const response = await fetch("http://192.168.1.78:9000/api/posts", requestOptions);
-        const json = await response.json();
-        console.log(json[0].imgsource);   
-        
-        this.setState({ title: json[0].title, description: json[0].description, imgsource: json[0].imgsource })
-    
-      };
 
+        const response = await fetch("http://192.168.1.78:9000/api/posts", requestOptions);
+
+        if (!response.ok) {
+            console.log('fin de la liste');
+            this.setState({ end: true });
+        } else {
+            const json = await response.json();
+            this.setState({ datasource: this.state.datasource.concat(json) });
+            this.setState({ loading: false, refreshing: false });
+        }
+
+        console.log('end get podtst');
+
+
+    }
+
+    _handleLoadMore = () => {
+        console.log('LOAD MORE')
+        this.setState({ count: this.state.count + 1 }, () => { this.getPosts() });
+        console.log(this.state.datasource.length)
+    }
+
+    _handleFooterComponent = () => {
+        return (
+            <View>
+                {this.state.end ? (
+                    <FlatList
+                        data={this.state.datasource}
+                        renderItem={this.renderItemSuggest}
+                        keyExtractor={(item, index) => index.toString()}
+                        horizontal={true}
+                    />
+                ) : (
+                    <View style={{ alignItems: "center", justifyContent: "center" }}>
+                        <DotsLoader color='#fb5b5a' />
+                    </View>
+                )}
+            </View>
+        )
+    }
+
+    _handleRefresh = () => {
+        this.setState({
+            count: 1,
+            refreshing: true,
+            loading: true,
+            end: false,
+            datasource: [],
+        }, () => {
+            this.getPosts();
+        })
+    }
 
     render() {
         return (
-            <Card>
-                <CardItem>
-                    <Left>
-                        <Thumbnail source={{ uri: 'https://images.bfmtv.com/AFn-Kh1iHnrSraLWJEPT-KPs6SI=/40x3:584x309/640x0/images/-67818.jpg'}}/>
-                        <Body>
-                            <Text>Pablo Escobar</Text>
-                            <Text note>Jan 15, 2021</Text>
-                        </Body>
-                    </Left>
-                </CardItem>
-                <CardItem cardBody>
-                    <Image
-                        source={{ uri: this.state.imgsource }}
-                        style={{ height: 200, width: null, flex: 1}}
-                    />
-                </CardItem>
-                <CardItem style={{ height: 45}}>
-                    <Left>
-                        <Button transparent>
-                            <Text>likes</Text>
-                        </Button>
-                        <Button transparent>
-                            <Text>comment</Text>
-                        </Button>
-                        <Button transparent>
-                            <Text>share</Text>
-                        </Button>
-                    </Left>
-                </CardItem>
+            <View>
+                {this.state.loading ? (
+                    <View style={{ alignItems: "center", justifyContent: "center", marginTop: 250 }}>
+                        <CirclesLoader color='#fb5b5a' />
+                        <TextLoader text="Loading" color='#fb5b5a' />
+                    </View>
+                ) : (
+                    <View>
+                        <FlatList
+                            data={this.state.datasource}
+                            renderItem={this.renderItem}
+                            keyExtractor={(item, index) => index.toString()}
+                            onEndReached={this._handleLoadMore}
+                            onEndReachedThreshold={0.1}
+                            refreshControl={
+                                <RefreshControl
+                                    refreshing={this.state.refreshing}
+                                    onRefresh={this._handleRefresh}
+                                />
+                            }
+                            ListFooterComponent={this._handleFooterComponent()}
+                        />
 
-                <CardItem>
-                    <Body>
-                        <Text>{this.state.title}</Text>
-                        <Text>{this.state.description}</Text>
-                    </Body>
-                </CardItem>
+                    </View>
 
-                <CardItem>
-                    <TouchableOpacity onPress={() => 
-                                console.log(this.state.imgsource) }>
-                                <Text>TEST</Text>
-                    </TouchableOpacity>
-                </CardItem>
-            </Card>
+                )}
 
-
-    )
-  }
+            </View>
+        )
+    }
 }
+
+
+
+const styles = StyleSheet.create({
+    followButton: {
+        width: "100%",
+        backgroundColor: "#fb5b5a",
+        borderRadius: 10,
+        height: 45,
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    followText: {
+        color: "white",
+    }
+});
 
 export default HomePage

@@ -6,6 +6,18 @@ const posts = new mongoose.Schema({
     userId: {
         type: String
     },
+    time: {
+        type: String
+    },
+    date: {
+        type: String
+    },
+    username: {
+        type: String
+    },
+    userPP: {
+        type: String
+    },
     title: {
         type: String
     },
