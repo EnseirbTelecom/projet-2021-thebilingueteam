@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState} from 'react';
 import {
     SafeAreaView,
     StyleSheet,
@@ -11,9 +11,10 @@ import {
     TextInput, Image
 } from 'react-native';
 
-export default function SearchBox({ value, updateSearch, style }) {
+export default function Searchbar({ value,updateSearch, style }) {
 
     const [query, setQuery] = useState();
+    const [username, setUsername] = useState();
     return (
         <View style={[styles.container, style]}>
             <View style={styles.searchContainer}>
@@ -28,13 +29,20 @@ export default function SearchBox({ value, updateSearch, style }) {
                             style={styles.inputText}
                             placeholder="Search user..."
                             placeholderTextColor="black"
-                            //onChangeText={}
+                            onChangeText={(text) => {
+                                setQuery(text)
+                                updateSearch(text)
+                                
+
+                                  }
+
+                                }
                             />
                 {
                     query ?
 
                         <TouchableOpacity
-                            onPress={() => setQuery('')}
+                            onPress={() =>setQuery('')}
                             style={styles.vwClear}>
                             <Image
                                 style={styles.icClear}
@@ -42,7 +50,6 @@ export default function SearchBox({ value, updateSearch, style }) {
                         </TouchableOpacity>
                         : <View style={styles.vwClear} />
 }
-
             </View>
         </View >
     )
