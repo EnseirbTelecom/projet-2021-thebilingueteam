@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import {Dimensions, StyleSheet, Text, View, Button, Image, TouchableOpacity,FlatList } from 'react-native';
+import React, { useState, useEffect,useLayoutEffect } from 'react';
+import {Dimensions, StyleSheet, Text, View, Button, Image, TouchableOpacity,FlatList, Alert, Modal,Pressable } from 'react-native';
 import { Icon, Card, CardItem, Thumbnail, Container, Content, Header, Left, Body, Right } from 'native-base'
 const vw = Dimensions.get('screen').width;
 const vh = Dimensions.get('screen').height;
@@ -21,7 +21,9 @@ function UserPage(props) {
   const [profilePictureURI, setProfilePictureURI] = useState('https://t4.ftcdn.net/jpg/03/46/93/61/360_F_346936114_RaxE6OQogebgAWTalE1myseY1Hbb5qPM.jpg');
   const [bio, setBio] = useState('');
   const [postNumber,setPostNumber] = useState(0)
+
   const [posts, setPosts] = useState([]);
+  const [selectedPost, setSelectedPost] = useState({});
 
   useEffect(() => {
     getUserInfo(); // we get user profile
@@ -33,37 +35,132 @@ function UserPage(props) {
 
   useEffect(()=> {
     setPostNumber(posts.length);
+    PostGrid()
     setisLoading(false); //once we got all the posts
   },[posts])
 
-  const renderItem = ({ item }) => {
+  useEffect(()=>{
+    ModalPost();//we can render a modal only once we selected a post
+  },[selectedPost])
+
+  const deletePost = async ()=> {
+    console.log('suppression dun poste');
+    const requestOptions = {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json',
+          'id': selectedPost._id
+      },
+  }
+
+  const confirmPostSupression = ()=> {
     return (
-      <Card>
-      <CardItem>
-          <Left>
-              <Thumbnail source={{ uri: item.userPP }} />
-              <Body>
-                  <Text>{item.username}</Text>
-                  <Text note>{item.date}</Text>
-              </Body>
-          </Left>
-      </CardItem>
-      <CardItem cardBody>
-          <Image
-              source={{ uri: item.imgsource }}
-              style={{ height: 200, width: null, flex: 1 }}
-          />
-      </CardItem>
-      <CardItem>
-          <Body>
-              <Text>{item.title}</Text>
-              <Text>{item.description}</Text>
-          </Body>
-      </CardItem>
-  </Card>  
+      <View>
+        <Text>Confirmer la supression</Text>
+      </View>
     )
   }
- 
+
+  const response = await fetch("http://10.168.255.53:9000/api/posts/post/delete", requestOptions);
+  const json = await response.json();
+  console.log(json);
+  }
+
+  const displayPost = ()=>{
+    setVisibility(!visibility)
+  }
+
+  const [visibility, setVisibility] = useState(false);
+  const [visibilitySupression, setVisibilitySupression] = useState(false);
+
+  const ModalSupression = () => {
+    return (
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={visibilitySupression}
+      >
+        <View style={{flex:1,alignItems:'center',justifyContent:'center',backgroundColor: 'rgba(0,0,0,0.5)'}}>
+          <View style={{width:0.80*vw,backgroundColor:"white",borderRadius:0.03*vw}}>
+            <Text style={{fontWeight:'bold',fontSize:20, textAlign: 'center'}}>
+              Supprimer le post ?
+            </Text>
+            <View style={{flexDirection: 'row',justifyContent:'space-around',paddingTop:0.1*vw}}>
+            <Pressable onPress={()=>setVisibilitySupression(!visibilitySupression)}>
+              <Text>
+                Annuler
+              </Text>
+            </Pressable>
+            <Pressable onPress={()=>{
+              deletePost()
+              getUserPosts();
+              setVisibilitySupression(!visibilitySupression)}}>
+              <Text style={{fontSize:15,color:'red'}}>
+                Supprimer
+              </Text>
+            </Pressable>
+            </View>
+          </View>
+        </View>
+      </Modal>)
+  }
+
+  const ModalPost = () =>{
+    return (
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={visibility}
+        onRequestClose={() => {
+          setVisibility(!visibility);
+        }}
+      >
+        <View style={{flex:1,alignItems:'center',justifyContent:'center',backgroundColor: 'rgba(0,0,0,0.5)'}}>
+          <View style={{width:0.80*vw,borderRadius:0.03*vw, backgroundColor: "white"}}>
+            <View style={{width:0.80*vw, flexDirection:'row',justifyContent:'space-between'}}>
+              <Pressable onPress={()=>setVisibility(!visibility)}>
+                <Image source={{uri: 'https://p.kindpng.com/picc/s/214-2148901_close-icon-svg-hd-png-download.png'}}
+                style={{height: 0.1*vw,width:0.1*vw,marginTop:0.04*vw,marginLeft:0.04*vw}}/>
+              </Pressable>
+              <Pressable onPress={()=>{
+                setVisibility(!visibility)
+                setVisibilitySupression(!visibilitySupression);
+                }}>
+                <Image source={{uri: 'https://icons-for-free.com/iconfiles/png/512/delete+remove+trash+trash+bin+trash+can+icon-1320073117929397588.png'}}
+                style={{height: 0.1*vw,width:0.1*vw,marginTop:0.04*vw,marginRight:0.04*vw}}/>
+              </Pressable>
+            </View>
+            <View>
+              <Text style={{fontSize: 15,fontWeight: 'bold', textAlign: 'center',paddingTop:0.05*vw }}>{selectedPost.title}</Text>
+              <Image source={{uri: selectedPost.imgsource}}
+              style={{height:0.80*vw,width:0.80*vw}}/>
+              <Text style={{textAlign: 'center',paddingTop:0.05*vw,paddingBottom:0.05*vw}}>{selectedPost.description}</Text>
+            </View>
+          </View>
+        </View>
+      </Modal>
+    )
+  }
+
+  const PostGrid = () =>{
+    return(
+    <View style={{flexDirection: 'row', flexWrap:'wrap'}} >
+      {posts.map((post)=>
+      <TouchableOpacity onPress={()=>{
+        setSelectedPost(post)
+        displayPost()
+        }
+      }>
+        <View style={{height:0.333*vw,width:0.333*vw}}>
+        <Image 
+        source={{uri:post.imgsource}}
+        style={{height:0.30*vw,width:0.30*vw,marginLeft:0.02*vw,marginTop:0.02*vw}}
+        />
+        </View>
+      </TouchableOpacity>)}
+    </View>)
+  }
+
   const _handleAuth = () => {
     const action = { type: "REMOVE_TOKEN", value: 'concombre' }
     props.dispatch(action)
@@ -174,12 +271,13 @@ function UserPage(props) {
                   )}
                 </View>
               </View>
-                <FlatList
-                data={posts}
-                renderItem={renderItem}
-                keyExtractor={(item, index) => index.toString()}/>
-            
+
+              <View>
+                    <PostGrid />
+              </View>
             </Content>
+            <ModalPost />
+            <ModalSupression />
           </Container>
       )}  
     </Provider>

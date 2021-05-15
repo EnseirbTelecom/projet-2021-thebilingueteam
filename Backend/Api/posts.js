@@ -22,7 +22,7 @@ route.get('/posts', (req, res) =>{
     .then((result) => {
         console.log(result);
         console.log(result.length);
-        if (result.length == 0){
+       if (result.length == 0){
             res.status(415).json('plus de docs');
         } else {
             res.status(200).json(result);
@@ -67,6 +67,18 @@ route.post('/posts/post',verifyToken,(req,res,next) => {
     })
     .catch((error) => {
         console.log(error)
+    })
+})
+
+route.post('/posts/post/delete',(req,res,next) =>{
+    console.log('supression d un poste');
+    posts.deleteOne({_id: req.headers.id})
+    .then((result)=>{
+        res.status(200).json(result)
+    })
+    .catch((error)=>{
+        console.log(err);
+        res.status(415).json(err);
     })
 })
 
