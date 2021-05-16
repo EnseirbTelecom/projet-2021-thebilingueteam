@@ -36,7 +36,7 @@ route.get('/posts', (req, res) =>{
 
 route.get('/posts/user', (req,res) =>{
     console.log('posts d un user')
-    posts.find(({username: req.headers.username}))
+    posts.find(({username: req.headers.username})).sort({time: -1})
     .then((result) => {
         console.log(result);
         res.status(200).json(result);

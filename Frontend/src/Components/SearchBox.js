@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
     SafeAreaView,
     StyleSheet,
@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import { SearchBar } from 'react-native-elements';
 
-export default function Searchbar({ value,updateSearch, style }) {
+export default function Searchbar({ value, updateSearch, style }) {
 
     const [query, setQuery] = useState();
     const [username, setUsername] = useState();

@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="2089b3d9-1a69-4098-a892-92607e01710a" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/Backend/Api/posts.js" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/Api/posts.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Frontend/src/Components/HomePage.js" beforeDir="false" afterPath="$PROJECT_DIR$/Frontend/src/Components/HomePage.js" afterDir="false" />
-    </list>
+    <list default="true" id="2089b3d9-1a69-4098-a892-92607e01710a" name="Default Changelist" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -37,9 +34,9 @@
     <servers />
   </component>
   <component name="WindowStateProjectService">
-    <state x="617" y="78" width="848" height="624" key="AVDManager" timestamp="1620993458423">
+    <state x="617" y="78" width="848" height="624" key="AVDManager" timestamp="1621109664728">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state x="617" y="78" width="848" height="624" key="AVDManager/0.0.1536.824@0.0.1536.824" timestamp="1620993458423" />
+    <state x="617" y="78" width="848" height="624" key="AVDManager/0.0.1536.824@0.0.1536.824" timestamp="1621109664728" />
   </component>
 </project>
