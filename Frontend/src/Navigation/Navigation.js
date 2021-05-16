@@ -16,6 +16,7 @@ import SignIn from '../Components/SignIn'
 import SignUp from '../Components/SignUp'
 import Home from '../Components/Home'
 import EditProfile from '../Components/EditProfile';
+import FriendProfile from '../Components/FriendProfile';
 
 
 const Stack = createStackNavigator(); //Initialize stack
@@ -56,6 +57,20 @@ function Navigation(){
           <Stack.Screen
             name="EditProfile"
             component={EditProfile}
+            options={{
+                headerShown: false,
+                headerStyle: {
+                  backgroundColor: 'white',
+                },
+                headerTintColor: '#fb5b5a',
+                headerTitleStyle: {
+                  fontWeight: 'bold',
+                },
+            }}
+          />
+          <Stack.Screen
+            name="FriendProfile"
+            component={FriendProfile}
             options={{
                 headerShown: false,
                 headerStyle: {

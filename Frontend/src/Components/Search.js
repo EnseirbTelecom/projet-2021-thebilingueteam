@@ -1,9 +1,10 @@
 import React, {useState, useEffect} from 'react';
 import { StyleSheet, Text, View, Button, FlatList,Image } from 'react-native';
+import { TouchableHighlight } from 'react-native-gesture-handler';
 import SearchBox from './SearchBox'
 
 
-export default function Search(){
+function Search(props){
     const [value, setValue] = useState();
     const [pseudo, setPseudo] = useState();
     const [img, setImg] = useState("https://t4.ftcdn.net/jpg/03/46/93/61/360_F_346936114_RaxE6OQogebgAWTalE1myseY1Hbb5qPM.jpg");
@@ -26,7 +27,6 @@ export default function Search(){
         }
         else{
           setBddError("")
-          console.log("On a trouvé un user")
           response.json().then ((json) => {
               setJson(json)
               setPseudo(json.pseudo)
@@ -34,7 +34,6 @@ export default function Search(){
               {
                 setImg(json.userPP)
               }
-              console.log(json.mail)
           })
         }
       })
@@ -52,12 +51,27 @@ export default function Search(){
         {bddError ? 
         <Text>{bddError}</Text>
         :
-        <View style = {{flexDirection: 'row'}}>
-        <Text>pseudo:{pseudo}</Text>
-        <Image
-                      style={{ width: 75, height: 75, borderRadius: 37.5 }}
-                      source={{ uri: img }} 
-                      />
+        <View style = {{flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center',borderWidth: 2 }}>
+          <TouchableHighlight
+                        onPress={() => {
+                          props.navigation.navigate('FriendProfile', {})
+                        }}>
+          <Image
+              style={{ width: 60, height: 60, borderRadius: 37.5, margin: 20, marginRight: 20, }}
+              source={{ uri: img }} 
+              />
+            </TouchableHighlight>
+         <Text style={{ fontSize:25, borderLeftWidth: 2 , padding:15, margin:15,marginRight:35, }}>{pseudo}</Text>
+         <Button
+            raised="true"
+            title="Add friend"
+            icon={{
+              name: "arrow-right",
+              size: 15,
+
+            }}
+         />
+
         </View>
          }
        </View>
@@ -70,3 +84,4 @@ const styles = StyleSheet.create({
       // backgroundColor: 'red', height: '100%', width: '100%' 
   },
 });
+export default connect(mapStateToProps)(Search)
