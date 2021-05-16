@@ -13,12 +13,17 @@ import { CirclesLoader, PulseLoader, TextLoader, DotsLoader } from 'react-native
 
 
 
-
 function UserPage(props) {
+  
+  useEffect(() => {
+      props.navigation.addListener('focus', () => {
+      getUserPosts();
+    });
+  }, [props.navigation]);
 
   const [username, setUserName] = useState('');
   const [isLoading, setisLoading] = useState(true);
-  const [profilePictureURI, setProfilePictureURI] = useState('https://t4.ftcdn.net/jpg/03/46/93/61/360_F_346936114_RaxE6OQogebgAWTalE1myseY1Hbb5qPM.jpg');
+  const [profilePictureURI, setProfilePictureURI] = useState();
   const [bio, setBio] = useState('');
   const [postNumber,setPostNumber] = useState(0)
 
@@ -26,8 +31,8 @@ function UserPage(props) {
   const [selectedPost, setSelectedPost] = useState({});
 
   useEffect(() => {
-    getUserInfo(); // we get user profile
-  },[])
+    getUserInfo();// we get user profile
+  })
 
   useEffect(() => {
     getUserPosts(); //we get user posts once we got usernanme
@@ -35,7 +40,6 @@ function UserPage(props) {
 
   useEffect(()=> {
     setPostNumber(posts.length);
-    PostGrid()
     setisLoading(false); //once we got all the posts
   },[posts])
 
@@ -51,14 +55,6 @@ function UserPage(props) {
           'Content-Type': 'application/json',
           'id': selectedPost._id
       },
-  }
-
-  const confirmPostSupression = ()=> {
-    return (
-      <View>
-        <Text>Confirmer la supression</Text>
-      </View>
-    )
   }
 
   const response = await fetch("http://10.168.255.53:9000/api/posts/post/delete", requestOptions);
@@ -152,10 +148,12 @@ function UserPage(props) {
         }
       }>
         <View style={{height:0.333*vw,width:0.333*vw}}>
+        <View style={{height:0.30*vw,width:0.30*vw,marginLeft:0.02*vw,marginTop:0.02*vw,backgroundColor:'#DCDCDC'}}>
         <Image 
         source={{uri:post.imgsource}}
-        style={{height:0.30*vw,width:0.30*vw,marginLeft:0.02*vw,marginTop:0.02*vw}}
+        style={{height:0.30*vw,width:0.30*vw}}
         />
+        </View>
         </View>
       </TouchableOpacity>)}
     </View>)
@@ -228,9 +226,12 @@ function UserPage(props) {
               <View>
                 <View style={{ flexDirection: 'row' }}>
                   <View style={{ flex: 1, paddingLeft: 5, justifyContent: 'space-around' }}>
-                    <Image
-                      style={{ width: 75, height: 75, borderRadius: 37.5 }}
-                      source={{ uri: profilePictureURI }} />
+                    <View style={{width: 75, height: 75 ,borderRadius:37.5, backgroundColor:'#DCDCDC'}}>
+                      <Image 
+                      source={{uri: profilePictureURI}}
+                      style={{width: 75, height: 75 ,borderRadius:37.5}}
+                      />
+                    </View>
                   </View>
                   <View style={{ flex: 3 }}>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
