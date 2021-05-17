@@ -2,18 +2,18 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, Button, FlatList, Image } from 'react-native';
 import { TouchableHighlight } from 'react-native-gesture-handler';
 import SearchBox from './SearchBox'
+import { connect } from 'react-redux'
 import { Provider } from 'react-redux'
 import Store from '../Store/configureStore'
-import { connect } from 'react-redux'
 
 
-function Search(props) {
-  const [value, setValue] = useState();
-  const [pseudo, setPseudo] = useState();
-  const [img, setImg] = useState("https://t4.ftcdn.net/jpg/03/46/93/61/360_F_346936114_RaxE6OQogebgAWTalE1myseY1Hbb5qPM.jpg");
-  const [json, setJson] = useState();
-  const [bddError, setBddError] = useState("Find users");
-  const [userFollowedId, setuserFollowedId] = useState('');
+function Search(props){
+    const [value, setValue] = useState();
+    const [pseudo, setPseudo] = useState();
+    const [img, setImg] = useState("https://t4.ftcdn.net/jpg/03/46/93/61/360_F_346936114_RaxE6OQogebgAWTalE1myseY1Hbb5qPM.jpg");
+    const [json, setJson] = useState();
+    const [bddError, setBddError] = useState("Find users");
+    const [bio, setBio] = useState();
 
 
   const _handleFollow = async () => {
@@ -48,60 +48,39 @@ function Search(props) {
         }
         else {
           setBddError("")
-          response.json().then((json) => {
-            setJson(json)
-            setPseudo(json.pseudo)
-            if (json.userPP) {
-              setImg(json.userPP)
-            }
+          response.json().then ((json) => {
+          setJson(json)
+          console.log(JSON.stringify(json))
           })
         }
       })
 
       .catch((error) => console.error(error))
   }
-
-  return (
-    <Provider store={Store}>
-    <View style={styles.container}>
-      <View style={{ height: '20%', borderRadius: 10 }}>
-        <SearchBox
-          value={value}
-          updateSearch={updateSearch}
-        />
-      </View>
-      {bddError ?
-        <Text>{bddError}</Text>
-        :
-        <View style={{ flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center', borderWidth: 2 }}>
-          <TouchableHighlight
-            onPress={() => {
-              props.navigation.navigate('FriendProfile', {})
-            }}>
-            <Image
-              style={{ width: 60, height: 60, borderRadius: 37.5, margin: 20, marginRight: 20, }}
-              source={{ uri: img }}
-            />
-          </TouchableHighlight>
-          <Text style={{ fontSize: 25, borderLeftWidth: 2, padding: 15, margin: 15, marginRight: 35, }}>{pseudo}</Text>
-          <Button
-            raised="true"
-            title="Add friend"
-            icon={{
-              name: "arrow-right",
-              size: 15,
-            }}
-            onPress = {() => {
-              _handleFollow()
-            }}
-          />
-
+    return (
+      <View style={styles.container}>
+        <View style={{ height: '20%', borderRadius: 10}}>
+            <SearchBox
+                value={value}
+                updateSearch={updateSearch}
+            />          
         </View>
-      }
-    </View>
-    </Provider>
-  )
-}
+        { bddError ?
+          <Text>Make a research</Text>
+          :<FlatList
+            data={json}
+            keyExtractor={(item) => item._id}
+            renderItem={({ item }) => (
+             <Text>{item.pseudo}</Text>
+            )}
+            /> 
+            
+        }
+        
+       </View>
+          
+    )
+  }
 
 const styles = StyleSheet.create({
   container: {
@@ -110,10 +89,7 @@ const styles = StyleSheet.create({
   },
 });
 
-
-
 const mapStateToProps = (state) => {
   return state
 }
-
 export default connect(mapStateToProps)(Search)
