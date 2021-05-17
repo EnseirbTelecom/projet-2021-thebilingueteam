@@ -29,7 +29,7 @@ function Search(props){
         userFollowed: pseudo,
       })
     }
-    const response = await fetch("http://192.168.1.78:9000/api/user/follow", requestOptions);
+    const response = await fetch("http://192.168.1.22:9000/api/user/follow", requestOptions);
   }
 
 
@@ -42,7 +42,7 @@ function Search(props){
         'pseudo': value
       }
     }
-    fetch("http://192.168.1.78:9000/api/user/search", requestOptions)
+    fetch("http://192.168.1.22:9000/api/user/search", requestOptions)
       .then(function (response) {
         if (!response.ok) {
           setBddError("Can't find this user")
@@ -59,8 +59,14 @@ function Search(props){
       .catch((error) => console.error(error))
   }
 
-  function preventDefault(){
-    
+  function preventDefault(item){
+    props.navigation.navigate('FriendProfile', {
+      pseudo: item.pseudo,
+      mail: item.mail,
+      PPuri: item.userPP,
+      bio: item.bio, 
+      following: item.following, 
+      followers: item.followers }) 
   }
   
     return (
@@ -79,7 +85,7 @@ function Search(props){
             data={json}
             keyExtractor={(item) => item._id}
             renderItem={({ item }) => (
-            <TouchableOpacity style={styles.button} underlayColor={"COLOR"} style = {styles.button} onPress = {() => preventDefault()}>
+            <TouchableOpacity style={styles.button} underlayColor={"COLOR"} style = {styles.button} onPress = {() => preventDefault(item)}>
               <ListItem containerStyle={{ borderBottomWidth: 1 }}>
                   <Avatar source={{uri: item.userPP}} />
                   <ListItem.Content>
@@ -91,12 +97,9 @@ function Search(props){
             </TouchableOpacity>
             )}
             /> 
-            </View>
-            
-            
+            </View>          
         }
-        
-       </View>
+      </View>
           
     )
   }
@@ -104,7 +107,6 @@ function Search(props){
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // backgroundColor: 'red', height: '100%', width: '100%' 
   },
 });
 
