@@ -15,7 +15,6 @@ import { SearchBar } from 'react-native-elements';
 export default function Searchbar({ value, updateSearch, style }) {
 
     const [query, setQuery] = useState();
-    const [username, setUsername] = useState();
     return (
         <SafeAreaView style={{ flex: 1 }}>
           <SearchBar

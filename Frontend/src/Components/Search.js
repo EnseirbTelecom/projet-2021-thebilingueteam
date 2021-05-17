@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, Button, FlatList, Image } from 'react-native';
-import { TouchableHighlight } from 'react-native-gesture-handler';
+import React, {useState, useEffect} from 'react';
+import { StyleSheet, Text, View, Button, FlatList,Image, List } from 'react-native';
+import { TouchableHighlight, TouchableOpacity } from 'react-native-gesture-handler';
 import SearchBox from './SearchBox'
 import { connect } from 'react-redux'
 import { Provider } from 'react-redux'
 import Store from '../Store/configureStore'
+import { ListItem, Avatar} from 'react-native-elements';
 
 
 function Search(props){
@@ -57,6 +58,11 @@ function Search(props){
 
       .catch((error) => console.error(error))
   }
+
+  function preventDefault(){
+    
+  }
+  
     return (
       <View style={styles.container}>
         <View style={{ height: '20%', borderRadius: 10}}>
@@ -67,13 +73,26 @@ function Search(props){
         </View>
         { bddError ?
           <Text>Make a research</Text>
-          :<FlatList
+          :
+          <View>
+          <FlatList
             data={json}
             keyExtractor={(item) => item._id}
             renderItem={({ item }) => (
-             <Text>{item.pseudo}</Text>
+            <TouchableOpacity style={styles.button} underlayColor={"COLOR"} style = {styles.button} onPress = {() => preventDefault()}>
+              <ListItem containerStyle={{ borderBottomWidth: 1 }}>
+                  <Avatar source={{uri: item.userPP}} />
+                  <ListItem.Content>
+                    <ListItem.Title>{item.pseudo}</ListItem.Title>
+                    <ListItem.Subtitle>{item.mail}</ListItem.Subtitle>
+                  </ListItem.Content>
+                  <ListItem.Chevron color="black" />
+               </ListItem>
+            </TouchableOpacity>
             )}
             /> 
+            </View>
+            
             
         }
         
