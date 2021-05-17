@@ -13,15 +13,17 @@ const { time } = require('console')
 const route = express.Router()
 
 
-route.get('/posts', (req, res) =>{
+route.post('/posts', (req, res) =>{
     console.log('liste des posts')
-    const {offset} = req.headers;
-    console.log(req.headers);
-    console.log(offset)
-    posts.find().sort({time: -1}).skip(2*(Number(offset)-1)).limit(2, function (e, d) {})
+    const {offset} = req.headers
+    const {following} = req.body
+    console.log(req.headers)
+    console.log(req.body)
+
+    posts.find({ username : { $in : following } }).sort({time: -1}).skip(10*(Number(offset)-1)).limit(10, function (e, d) {})
+    //posts.find({ username : { $in : following } })
     .then((result) => {
-        console.log(result);
-        console.log(result.length);
+
        if (result.length == 0){
             res.status(415).json('plus de docs');
         } else {
@@ -33,6 +35,8 @@ route.get('/posts', (req, res) =>{
         res.status(415).json(err);
     })
 })
+
+
 
 route.get('/posts/user', (req,res) =>{
     console.log('posts d un user')
@@ -46,7 +50,6 @@ route.get('/posts/user', (req,res) =>{
 
 route.post('/posts/post',verifyToken,(req,res,next) => {
     console.log('New post request')
-    console.log(req.body)
 
     const { imgsource, title, description, date, userPP, username, time } = req.body
     const post = {

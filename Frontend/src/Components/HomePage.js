@@ -4,6 +4,10 @@ import { StyleSheet, Text, View, Image, FlatList, RefreshControl, TouchableOpaci
 import { Button, Icon, Card, CardItem, Thumbnail, Header, Left, Body, Right } from 'native-base'
 import { CirclesLoader, PulseLoader, TextLoader, DotsLoader } from 'react-native-indicator'
 
+import { Provider } from 'react-redux'
+import Store from '../Store/configureStore'
+import { connect } from 'react-redux'
+
 
 class HomePage extends React.Component {
 
@@ -11,14 +15,13 @@ class HomePage extends React.Component {
         super(props)
         this.state = {
             loading: true,
-            title: '',
-            description: '',
             imgsource: '',
             datasource: [],
             refreshing: false,
             count: 1,
             end: false,
-            datasrcSuggest: [],
+            following: [],
+            suggestList: [],
         }
     }
 
@@ -63,14 +66,17 @@ class HomePage extends React.Component {
                 </CardItem>
                 <CardItem>
                     <Body>
-                        <Text>{item.username}</Text>
+                        <Text>{item.pseudo}</Text>
                     </Body>
                 </CardItem>
                 <CardItem>
                     <Body>
                         <TouchableOpacity
                             style={styles.followButton}
-                            onPress={() => console.log('youpi')}>
+                            onPress={() => {
+                                this._handleFollow(item.pseudo);
+                                this.updateSuggest(item.pseudo);
+                            }}>
                             <Text style={styles.followText}>Follow</Text>
                         </TouchableOpacity>
                     </Body>
@@ -79,19 +85,73 @@ class HomePage extends React.Component {
         )
     }
 
+    updateSuggest(user) {
+        var array = [...this.state.suggestList]; // make a separate copy of the array
+        console.log(user);
+        var index = array.findIndex(item => item.pseudo === user)
+        console.log(index)
+        if (index !== -1) {
+            array.splice(index, 1);
+            this.setState({ suggestList: array });
+        }
+        console.log(this.state.suggestList);
+    }
+
+    getSuggests = async () => {
+        const requestOptions = {
+            method: 'POST',
+            headers: {
+                'Authorization': 'Bearer' + ' ' + this.props.authToken,
+                'Content-Type': 'application/json'
+            },
+        }
+        const response = await fetch("http://192.168.1.78:9000/api/user/suggests", requestOptions);
+        const json = await response.json();
+        this.setState({ suggestList: json });
+    }
+
+
+    _handleFollow = async (username) => {
+        const requestOptions = {
+            method: 'POST',
+            headers: {
+                'Authorization': 'Bearer' + ' ' + this.props.authToken,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                userFollowed: username,
+            })
+        }
+        const response = await fetch("http://192.168.1.78:9000/api/user/follow", requestOptions);
+    }
+
     componentDidMount() {
-        console.log(this.state.refreshing);
-        this.getPosts();
+
+        this.getUserInfo().then(() => {
+            if (this.state.following.length != 0) {
+                this.getPosts()
+            }
+            else {
+                this.getSuggests().then(() => {
+                    this.setState({ loading: false })
+                })
+            }
+
+        })
     }
 
     getPosts = async () => {
 
         const requestOptions = {
-            method: 'GET',
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'offset': this.state.count,
             },
+            body: JSON.stringify({
+                following: this.state.following,
+            })
+
         }
 
         const response = await fetch("http://192.168.1.78:9000/api/posts", requestOptions);
@@ -106,9 +166,22 @@ class HomePage extends React.Component {
         }
 
         console.log('end get podtst');
-
-
     }
+
+    getUserInfo = async () => {
+
+        const requestOptions = {
+            method: 'GET',
+            headers: {
+                'Authorization': 'Bearer' + ' ' + this.props.authToken,
+                'Content-Type': 'application/json'
+            },
+        }
+        const response = await fetch("http://192.168.1.78:9000/api/user", requestOptions);
+        const json = await response.json();
+        this.setState({ following: json.following })
+    }
+
 
     _handleLoadMore = () => {
         console.log('LOAD MORE')
@@ -120,12 +193,9 @@ class HomePage extends React.Component {
         return (
             <View>
                 {this.state.end ? (
-                    <FlatList
-                        data={this.state.datasource}
-                        renderItem={this.renderItemSuggest}
-                        keyExtractor={(item, index) => index.toString()}
-                        horizontal={true}
-                    />
+                    <View style={{ alignItems: 'center' }}>
+                        <Text style={styles.logo}>No more posts</Text>
+                    </View>
                 ) : (
                     <View style={{ alignItems: "center", justifyContent: "center" }}>
                         <DotsLoader color='#fb5b5a' />
@@ -142,41 +212,73 @@ class HomePage extends React.Component {
             loading: true,
             end: false,
             datasource: [],
+            following: [],
         }, () => {
-            this.getPosts();
+            this.getUserInfo().then(() => {
+                if (this.state.following.length != 0) {
+                    this.getPosts()
+                }
+                else {
+                    this.setState({ loading: false })
+                }
+            })
         })
     }
 
     render() {
         return (
-            <View>
-                {this.state.loading ? (
-                    <View style={{ alignItems: "center", justifyContent: "center", marginTop: 250 }}>
-                        <CirclesLoader color='#fb5b5a' />
-                        <TextLoader text="Loading" color='#fb5b5a' />
-                    </View>
-                ) : (
-                    <View>
-                        <FlatList
-                            data={this.state.datasource}
-                            renderItem={this.renderItem}
-                            keyExtractor={(item, index) => index.toString()}
-                            onEndReached={this._handleLoadMore}
-                            onEndReachedThreshold={0.1}
-                            refreshControl={
-                                <RefreshControl
-                                    refreshing={this.state.refreshing}
-                                    onRefresh={this._handleRefresh}
-                                />
-                            }
-                            ListFooterComponent={this._handleFooterComponent()}
-                        />
+            <Provider store={Store}>
+                <View>
+                    {this.state.loading ? (
+                        <View style={{ alignItems: "center", justifyContent: "center", marginTop: 250 }}>
+                            <CirclesLoader color='#fb5b5a' />
+                            <TextLoader text="Loading" color='#fb5b5a' />
+                        </View>
+                    ) : (
+                        <View>
+                            {this.state.following.length != 0 ? (
+                                <View>
+                                    <FlatList
+                                        data={this.state.datasource}
+                                        renderItem={this.renderItem}
+                                        keyExtractor={(item, index) => index.toString()}
+                                        onEndReached={this._handleLoadMore}
+                                        onEndReachedThreshold={0.1}
+                                        refreshControl={
+                                            <RefreshControl
+                                                refreshing={this.state.refreshing}
+                                                onRefresh={this._handleRefresh}
+                                            />
+                                        }
+                                        ListFooterComponent={this._handleFooterComponent()}
+                                    />
 
-                    </View>
+                                </View>
+                            ) : (
+                                <View>
+                                    <View style={{ alignItems: 'center' }}>
+                                        <Text style={styles.logo}>Suggestions</Text>
+                                    </View>
+                                    <FlatList
+                                        data={this.state.suggestList}
+                                        renderItem={this.renderItemSuggest}
+                                        keyExtractor={(item, index) => index.toString()}
+                                        horizontal={true}
+                                    />
+                                    <View style={{ alignItems: 'center', marginTop: 25, width: '100%' }}>
+                                        <TouchableOpacity 
+                                            style={styles.followButton}
+                                            onPress={() =>this._handleRefresh()}>
+                                            <Text style={styles.followText}>Refresh</Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>
+                            )}
+                        </View>
+                    )}
 
-                )}
-
-            </View>
+                </View>
+            </Provider>
         )
     }
 }
@@ -184,6 +286,20 @@ class HomePage extends React.Component {
 
 
 const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: '#FEFEFE',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    logo: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontWeight: "bold",
+        fontSize: 50,
+        color: "#fb5b5a",
+        marginBottom: 40
+    },
     followButton: {
         width: "100%",
         backgroundColor: "#fb5b5a",
@@ -197,4 +313,9 @@ const styles = StyleSheet.create({
     }
 });
 
-export default HomePage
+const mapStateToProps = (state) => {
+    return state
+}
+
+
+export default connect(mapStateToProps)(HomePage)

@@ -1,87 +1,119 @@
-import React, {useState, useEffect} from 'react';
-import { StyleSheet, Text, View, Button, FlatList,Image } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, Text, View, Button, FlatList, Image } from 'react-native';
 import { TouchableHighlight } from 'react-native-gesture-handler';
 import SearchBox from './SearchBox'
+import { Provider } from 'react-redux'
+import Store from '../Store/configureStore'
+import { connect } from 'react-redux'
 
 
-function Search(props){
-    const [value, setValue] = useState();
-    const [pseudo, setPseudo] = useState();
-    const [img, setImg] = useState("https://t4.ftcdn.net/jpg/03/46/93/61/360_F_346936114_RaxE6OQogebgAWTalE1myseY1Hbb5qPM.jpg");
-    const [json, setJson] = useState();
-    const [bddError, setBddError] = useState("Find users");
+function Search(props) {
+  const [value, setValue] = useState();
+  const [pseudo, setPseudo] = useState();
+  const [img, setImg] = useState("https://t4.ftcdn.net/jpg/03/46/93/61/360_F_346936114_RaxE6OQogebgAWTalE1myseY1Hbb5qPM.jpg");
+  const [json, setJson] = useState();
+  const [bddError, setBddError] = useState("Find users");
+  const [userFollowedId, setuserFollowedId] = useState('');
 
 
-    function updateSearch(value) {
-      const requestOptions = {
-        method: 'GET',
-        headers: { 
-            'Content-Type': 'application/json',
-            'pseudo': value 
-        }
+  const _handleFollow = async () => {
+    console.log('pseudo'+pseudo)
+    const requestOptions = {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer' + ' ' + props.authToken,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        userFollowed: pseudo,
+      })
+    }
+    const response = await fetch("http://192.168.1.78:9000/api/user/follow", requestOptions);
+  }
+
+
+
+  function updateSearch(value) {
+    const requestOptions = {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'pseudo': value
       }
-      fetch("http://192.168.1.22:9000/api/user/search", requestOptions)
-      .then(function(response) {
-        if(!response.ok) {
+    }
+    fetch("http://192.168.1.78:9000/api/user/search", requestOptions)
+      .then(function (response) {
+        if (!response.ok) {
           setBddError("Can't find this user")
         }
-        else{
+        else {
           setBddError("")
-          response.json().then ((json) => {
-              setJson(json)
-              setPseudo(json.pseudo)
-              if (json.userPP) 
-              {
-                setImg(json.userPP)
-              }
+          response.json().then((json) => {
+            setJson(json)
+            setPseudo(json.pseudo)
+            if (json.userPP) {
+              setImg(json.userPP)
+            }
           })
         }
       })
 
       .catch((error) => console.error(error))
   }
-    return (
-      <View style={styles.container}>
-        <View style={{ height: '20%', borderRadius: 10}}>
-            <SearchBox
-                value={value}
-                updateSearch={updateSearch}
-            />          
-        </View>
-        {bddError ? 
+
+  return (
+    <Provider store={Store}>
+    <View style={styles.container}>
+      <View style={{ height: '20%', borderRadius: 10 }}>
+        <SearchBox
+          value={value}
+          updateSearch={updateSearch}
+        />
+      </View>
+      {bddError ?
         <Text>{bddError}</Text>
         :
-        <View style = {{flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center',borderWidth: 2 }}>
+        <View style={{ flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center', borderWidth: 2 }}>
           <TouchableHighlight
-                        onPress={() => {
-                          props.navigation.navigate('FriendProfile', {})
-                        }}>
-          <Image
+            onPress={() => {
+              props.navigation.navigate('FriendProfile', {})
+            }}>
+            <Image
               style={{ width: 60, height: 60, borderRadius: 37.5, margin: 20, marginRight: 20, }}
-              source={{ uri: img }} 
-              />
-            </TouchableHighlight>
-         <Text style={{ fontSize:25, borderLeftWidth: 2 , padding:15, margin:15,marginRight:35, }}>{pseudo}</Text>
-         <Button
+              source={{ uri: img }}
+            />
+          </TouchableHighlight>
+          <Text style={{ fontSize: 25, borderLeftWidth: 2, padding: 15, margin: 15, marginRight: 35, }}>{pseudo}</Text>
+          <Button
             raised="true"
             title="Add friend"
             icon={{
               name: "arrow-right",
               size: 15,
-
             }}
-         />
+            onPress = {() => {
+              _handleFollow()
+            }}
+          />
 
         </View>
-         }
-       </View>
-    )
-  }
+      }
+    </View>
+    </Provider>
+  )
+}
 
 const styles = StyleSheet.create({
   container: {
-      flex: 1,
-      // backgroundColor: 'red', height: '100%', width: '100%' 
+    flex: 1,
+    // backgroundColor: 'red', height: '100%', width: '100%' 
   },
 });
+
+
+
+const mapStateToProps = (state) => {
+  return state
+}
+
 export default connect(mapStateToProps)(Search)

@@ -15,6 +15,5 @@ app.set("view engine", "ejs");
 app.use('/api', require('./Api/User'))
 app.use('/api', require('./Api/posts'))
 
-
 const port = process.env.PORT_SERVER
 app.listen(port, () => console.log('Server started on port '+ port))

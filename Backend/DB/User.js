@@ -16,6 +16,12 @@ const user = new mongoose.Schema({
     },
     userPP: {
         type: String
+    },
+    following: {
+        type: Array
+    },
+    followers: {
+        type: Array
     }
 });
 

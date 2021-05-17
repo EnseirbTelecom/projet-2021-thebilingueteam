@@ -132,6 +132,55 @@ route.get('/user',verifyToken,(req,res,next) => {
     })
 })
 
+
+
+route.post('/user/follow',verifyToken,(req,res,next) => {
+    console.log('Follow request')
+    const userFollowed = req.body.userFollowed
+    console.log('user' + userFollowed)
+
+    User.updateOne({_id: req.id.id},{"$addToSet": { "following": req.body.userFollowed } })
+    .then((result) => {
+        console.log('following succeed')
+        res.status(200).json('Following succed')
+    })
+    .catch((err) =>{
+        console.log(err)
+        res.status(415).json(err)
+    })
+})
+
+
+route.post('/user/unfollow',verifyToken,(req,res,next) => {
+    console.log('Unfollow request')
+    const userFollowed = req.body.userFollowed
+    console.log('user' + userFollowed)
+
+    User.updateOne({_id: req.id.id},{"$pull": { "following": req.body.userFollowed } })
+    .then((result) => {
+        console.log('unfollowing succeed')
+        res.status(200).json('UnFollowing succed')
+    })
+    .catch((err) =>{
+        console.log(err)
+        res.status(415).json(err)
+    })
+})
+
+route.post('/user/suggests',verifyToken,(req,res,next) => {
+    console.log('suggest request')
+
+    User.find({ _id : { $nin : req.id.id } }).limit(5)
+    .then((result) => {
+        console.log('suggest succeed')
+        res.status(200).json(result)
+    })
+    .catch((err) =>{
+        console.log(err)
+        res.status(415).json(err)
+    })
+})
+
 route.get('/user/search',(req,res,next) => {
     console.log('New search request')
     const {pseudo} = req.headers
