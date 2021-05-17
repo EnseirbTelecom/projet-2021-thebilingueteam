@@ -4,8 +4,6 @@ import { Icon, Card, CardItem, Thumbnail, Container, Content, Header, Left, Body
 const vw = Dimensions.get('screen').width;
 const vh = Dimensions.get('screen').height;
 
-import EditProfile from './EditProfile'
-
 import { Provider } from 'react-redux'
 import Store from '../Store/configureStore'
 import { connect } from 'react-redux'

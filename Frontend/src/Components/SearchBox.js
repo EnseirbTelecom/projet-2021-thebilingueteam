@@ -2,17 +2,10 @@ import React, { useState } from 'react';
 import {
     SafeAreaView,
     StyleSheet,
-    ScrollView,
-    View,
-    Text,
-    StatusBar,
-    FlatList,
-    TouchableOpacity,
-    TextInput, Image
 } from 'react-native';
 import { SearchBar } from 'react-native-elements';
 
-export default function Searchbar({ value, updateSearch, style }) {
+export default function Searchbar({ value, updateSearch }) {
 
     const [query, setQuery] = useState();
     return (
@@ -28,7 +21,9 @@ export default function Searchbar({ value, updateSearch, style }) {
             platform={Platform.OS}
             onChangeText={(text) => {
             setQuery(text)
+              if (text != "") {
             updateSearch(text)
+              }
              }
             }
           />

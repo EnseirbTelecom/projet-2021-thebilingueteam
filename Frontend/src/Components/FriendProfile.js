@@ -1,16 +1,115 @@
-import React, {useState} from 'react'
-import { StyleSheet, Text, View, Image,TouchableOpacity, Button, Alert, Modal} from 'react-native';
-import {} from 'react-native';
-import { Provider, connect } from 'react-redux'
-import Store from '../Store/configureStore'
+import React, { useState, useEffect,useLayoutEffect } from 'react';
+import {Dimensions, StyleSheet, Text, View, Button, Image, TouchableOpacity,FlatList, Alert, Modal,Pressable } from 'react-native';
 import { Icon, Card, CardItem, Thumbnail, Container, Content, Header, Left, Body, Right } from 'native-base'
+const vw = Dimensions.get('screen').width;
+const vh = Dimensions.get('screen').height;
+
+import { Provider } from 'react-redux'
+import Store from '../Store/configureStore'
+import { connect } from 'react-redux'
+import { CirclesLoader, PulseLoader, TextLoader, DotsLoader } from 'react-native-indicator'
 
 function FriendProfile({route, navigation}) {
     const {pseudo, mail, PPuri, bio, following, followers} = route.params;
+    const [isLoading, setisLoading] = useState(true);
     const [postNumber,setPostNumber] = useState(0)
+  
+    const [posts, setPosts] = useState([]);
+    const [selectedPost, setSelectedPost] = useState({});
+    
+    useEffect(() => {
+        getUserPosts(); //we get user posts once we got usernanme
+      },[pseudo]);
+    
+      useEffect(()=> {
+        setPostNumber(posts.length);
+        setisLoading(false); //once we got all the posts
+      },[posts])
 
+      useEffect(()=>{
+        ModalPost();//we can render a modal only once we selected a post
+      },[selectedPost])
+
+
+    const ModalPost = () =>{
+        return (
+          <Modal
+            animationType="fade"
+            transparent={true}
+            visible={visibility}
+            onRequestClose={() => {
+              setVisibility(!visibility);
+            }}
+          >
+            <View style={{flex:1,alignItems:'center',justifyContent:'center',backgroundColor: 'rgba(0,0,0,0.5)'}}>
+              <View style={{width:0.80*vw,borderRadius:0.03*vw, backgroundColor: "white"}}>
+                <View style={{width:0.80*vw, flexDirection:'row',justifyContent:'space-between'}}>
+                  <Pressable onPress={()=>setVisibility(!visibility)}>
+                    <Image source={{uri: 'https://p.kindpng.com/picc/s/214-2148901_close-icon-svg-hd-png-download.png'}}
+                    style={{height: 0.1*vw,width:0.1*vw,marginTop:0.04*vw,marginLeft:0.04*vw}}/>
+                  </Pressable>
+                </View>
+                <View>
+                  <Text style={{fontSize: 15,fontWeight: 'bold', textAlign: 'center',paddingTop:0.05*vw }}>{selectedPost.title}</Text>
+                  <Image source={{uri: selectedPost.imgsource}}
+                  style={{height:0.80*vw,width:0.80*vw}}/>
+                  <Text style={{textAlign: 'center',paddingTop:0.05*vw,paddingBottom:0.05*vw}}>{selectedPost.description}</Text>
+                </View>
+              </View>
+            </View>
+          </Modal>
+        )
+      }
+      const displayPost = ()=>{
+        setVisibility(!visibility)
+      }
+      const [visibility, setVisibility] = useState(false);
+
+      const PostGrid = () =>{
+        return(
+        <View style={{flexDirection: 'row', flexWrap:'wrap'}} >
+          {posts.map((post)=>
+          <TouchableOpacity onPress={()=>{
+            setSelectedPost(post)
+            displayPost()
+            }
+          }>
+            <View style={{height:0.333*vw,width:0.333*vw}}>
+            <View style={{height:0.30*vw,width:0.30*vw,marginLeft:0.02*vw,marginTop:0.02*vw,backgroundColor:'#DCDCDC'}}>
+            <Image 
+            source={{uri:post.imgsource}}
+            style={{height:0.30*vw,width:0.30*vw}}
+            />
+            </View>
+            </View>
+          </TouchableOpacity>)}
+        </View>)
+      }
+      const getUserPosts = async () =>{
+        console.log(pseudo);
+        const requestOptions = {
+          method: 'GET',
+          headers: {
+              'Content-Type': 'application/json',
+              'username': pseudo
+          },
+      }
+    
+      const response = await fetch("http://192.168.1.22:9000/api/posts/user", requestOptions);
+      const json = await response.json();
+      console.log(json);
+      console.log('jai recu les posts')
+      setPosts(json);
+      }
+      
     return (
-        <Container style={{ flex: 1, backgroundColor: 'white' }}>
+    <Provider store={Store}>
+        {isLoading === true ? (
+            <View style={{ alignItems: "center", justifyContent: "center", marginTop: 250 }}>
+                <CirclesLoader color='#fb5b5a' />
+                <TextLoader text="Loading" color='#fb5b5a'/>
+             </View> )
+       :(<Container style={{ flex: 1, backgroundColor: 'white' }}>
           <Content>
             <View>
               <View style={{ flexDirection: 'row' }}>
@@ -54,14 +153,19 @@ function FriendProfile({route, navigation}) {
               <View style={{ paddingBottom: 10, paddingHorizontal: 10 }}>
                 <Text style={{ fontWeight: 'bold' }}>{pseudo}</Text>
                 {bio === '' ? (
-                  <Text>Vous n'avez pas de description, ajoutez en une en editant votre profil !</Text>
+                  <Text></Text>
                 ) : (
                   <Text>{bio}</Text>
                 )}
               </View>
             </View>
+            <View>
+                <PostGrid />
+            </View>
           </Content>
         </Container>
+    )}
+    </Provider>
     )  
  }
 const styles = StyleSheet.create({

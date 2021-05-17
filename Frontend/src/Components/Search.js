@@ -71,32 +71,31 @@ function Search(props){
   
     return (
       <View style={styles.container}>
-        <View style={{ height: '20%', borderRadius: 10}}>
+        <View style={styles.box}>
             <SearchBox
                 value={value}
                 updateSearch={updateSearch}
             />          
         </View>
         { bddError ?
-          <Text>Make a research</Text>
-          :
-          <View>
-          <FlatList
-            data={json}
-            keyExtractor={(item) => item._id}
-            renderItem={({ item }) => (
-            <TouchableOpacity style={styles.button} underlayColor={"COLOR"} style = {styles.button} onPress = {() => preventDefault(item)}>
-              <ListItem containerStyle={{ borderBottomWidth: 1 }}>
-                  <Avatar source={{uri: item.userPP}} />
-                  <ListItem.Content>
-                    <ListItem.Title>{item.pseudo}</ListItem.Title>
-                    <ListItem.Subtitle>{item.mail}</ListItem.Subtitle>
-                  </ListItem.Content>
-                  <ListItem.Chevron color="black" />
-               </ListItem>
-            </TouchableOpacity>
-            )}
-            /> 
+          <View></View>
+        : <View>
+            <FlatList
+              data={json}
+              keyExtractor={(item) => item._id}
+              renderItem={({ item }) => (
+              <TouchableOpacity  onPress = {() => preventDefault(item)}>
+                <ListItem style={styles.itemContainer}>
+                    <Avatar source={{uri: item.userPP}} />
+                    <ListItem.Content>
+                      <ListItem.Title>{item.pseudo}</ListItem.Title>
+                      <ListItem.Subtitle>{item.mail}</ListItem.Subtitle>
+                    </ListItem.Content>
+                    <ListItem.Chevron color="black" />
+                </ListItem>
+              </TouchableOpacity>
+              )}
+              /> 
             </View>          
         }
       </View>
@@ -108,6 +107,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  itemContainer: {
+    borderBottomWidth: 1,
+  },
+  box: {
+    height: '20%', 
+    borderRadius: 10,
+  }
 });
 
 const mapStateToProps = (state) => {
