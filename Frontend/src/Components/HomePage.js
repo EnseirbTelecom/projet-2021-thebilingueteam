@@ -266,9 +266,9 @@ class HomePage extends React.Component {
                                         horizontal={true}
                                     />
                                     <View style={{ alignItems: 'center', marginTop: 25, width: '100%' }}>
-                                        <TouchableOpacity 
+                                        <TouchableOpacity
                                             style={styles.followButton}
-                                            onPress={() =>this._handleRefresh()}>
+                                            onPress={() => this._handleRefresh()}>
                                             <Text style={styles.followText}>Refresh</Text>
                                         </TouchableOpacity>
                                     </View>

@@ -1,15 +1,81 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import { StyleSheet, Text, View, Image,TouchableOpacity, Button, Alert, Modal} from 'react-native';
 import {} from 'react-native';
 import { Provider, connect } from 'react-redux'
 import Store from '../Store/configureStore'
 import { Icon, Card, CardItem, Thumbnail, Container, Content, Header, Left, Body, Right } from 'native-base'
 
-function FriendProfile({route, navigation}) {
-    const {pseudo, mail, PPuri, bio, following, followers} = route.params;
-    const [postNumber,setPostNumber] = useState(0)
+function FriendProfile({route, navigation}, {props}) {
+    const { authToken, pseudo, mail, PPuri, bio, following, followers } = route.params;
+    const [postNumber,setPostNumber] = useState(0);
+    const [myFollowing, setmyFollowing] = useState([]);
+    const [isFollowed, setisFollowed] = useState(false);
+
+    useEffect(() => {
+      console.log('My Token :' + authToken);
+      getUserInfo();
+      console.log('My following :' + myFollowing);
+    }, []);
+
+    useEffect(() => {
+      _isFollowing();
+    }, [myFollowing]);
+
+    const _isFollowing = () => {
+      const ans = myFollowing.includes(pseudo);
+      console.log(ans);
+      if (ans == true){
+        setisFollowed(true);
+      } else {
+        setisFollowed(false);
+      }
+    }
+
+    const _handleFollow = async (username) => {
+      const requestOptions = {
+          method: 'POST',
+          headers: {
+              'Authorization': 'Bearer' + ' ' + authToken,
+              'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+              userFollowed: username,
+          })
+      }
+      const response = await fetch("http://192.168.1.78:9000/api/user/follow", requestOptions);
+    }
+
+    const _handleUnfollow = async (username) => {
+      const requestOptions = {
+          method: 'POST',
+          headers: {
+              'Authorization': 'Bearer' + ' ' + authToken,
+              'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+              userFollowed: username,
+          })
+      }
+      const response = await fetch("http://192.168.1.78:9000/api/user/unfollow", requestOptions);
+    }
+
+    const getUserInfo = async () => {
+
+      const requestOptions = {
+        method: 'GET',
+        headers: {
+          'Authorization': 'Bearer' + ' ' + authToken,
+          'Content-Type': 'application/json'
+        },
+      }
+      const response = await fetch("http://192.168.1.78:9000/api/user", requestOptions);
+      const json = await response.json();
+      console.log(json.following)
+      setmyFollowing(json.following);
+    }
 
     return (
+      
         <Container style={{ flex: 1, backgroundColor: 'white' }}>
           <Content>
             <View>
@@ -39,14 +105,25 @@ function FriendProfile({route, navigation}) {
                   </View>
 
                   <View style={{ flexDirection: 'row' }}>
-                  <TouchableOpacity
-                    style={styles.followButton}
-                    onPress={() => {
-                        navigation.navigate('Search')
-                    }}>
-                    <Text style={styles.followText}>unFollow</Text>
-                </TouchableOpacity>
-
+                    {isFollowed === true ? (
+                      <TouchableOpacity
+                      style={styles.followButton}
+                      onPress={() => {
+                          _handleUnfollow(pseudo);
+                          setisFollowed(false);
+                      }}>
+                      <Text style={styles.followText}>Unfollow</Text>
+                      </TouchableOpacity>
+                    ) : (
+                      <TouchableOpacity
+                      style={styles.followButton}
+                      onPress={() => {
+                          _handleFollow(pseudo);
+                          setisFollowed(true);
+                      }}>
+                      <Text style={styles.followText}>Follow</Text>
+                      </TouchableOpacity>
+                    )}
                   </View>
                 </View>
               </View>
@@ -82,5 +159,5 @@ const mapStateToProps = (state) => {
     return state
   }
   
-  export default connect(mapStateToProps)(FriendProfile)
+export default connect(mapStateToProps)(FriendProfile)
 

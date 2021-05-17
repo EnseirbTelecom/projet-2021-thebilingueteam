@@ -32,15 +32,16 @@ function UserPage(props) {
 
   useEffect(() => {
     getUserInfo();// we get user profile
+    
   })
 
   useEffect(() => {
     getUserPosts(); //we get user posts once we got usernanme
+    setisLoading(false); //once we got all the posts
   },[username]);
 
   useEffect(()=> {
     setPostNumber(posts.length);
-    setisLoading(false); //once we got all the posts
   },[posts])
 
   useEffect(()=>{
