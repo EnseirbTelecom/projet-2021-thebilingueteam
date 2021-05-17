@@ -135,7 +135,7 @@ route.get('/user',verifyToken,(req,res,next) => {
 route.get('/user/search',(req,res,next) => {
     console.log('New search request')
     const {pseudo} = req.headers
-    User.findOne({pseudo: pseudo})
+    User.find({pseudo: {$regex: pseudo, $options: "i"}})
     .then((doc) =>{
         if(doc===null){//echec la recherche
             console.log('user does not exist')

@@ -2,6 +2,9 @@ import React, {useState, useEffect} from 'react';
 import { StyleSheet, Text, View, Button, FlatList,Image } from 'react-native';
 import { TouchableHighlight } from 'react-native-gesture-handler';
 import SearchBox from './SearchBox'
+import { connect } from 'react-redux'
+import { Provider } from 'react-redux'
+import Store from '../Store/configureStore'
 
 
 function Search(props){
@@ -10,6 +13,7 @@ function Search(props){
     const [img, setImg] = useState("https://t4.ftcdn.net/jpg/03/46/93/61/360_F_346936114_RaxE6OQogebgAWTalE1myseY1Hbb5qPM.jpg");
     const [json, setJson] = useState();
     const [bddError, setBddError] = useState("Find users");
+    const [bio, setBio] = useState();
 
 
     function updateSearch(value) {
@@ -28,12 +32,8 @@ function Search(props){
         else{
           setBddError("")
           response.json().then ((json) => {
-              setJson(json)
-              setPseudo(json.pseudo)
-              if (json.userPP) 
-              {
-                setImg(json.userPP)
-              }
+          setJson(json)
+          console.log(JSON.stringify(json))
           })
         }
       })
@@ -48,33 +48,20 @@ function Search(props){
                 updateSearch={updateSearch}
             />          
         </View>
-        {bddError ? 
-        <Text>{bddError}</Text>
-        :
-        <View style = {{flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center',borderWidth: 2 }}>
-          <TouchableHighlight
-                        onPress={() => {
-                          props.navigation.navigate('FriendProfile', {})
-                        }}>
-          <Image
-              style={{ width: 60, height: 60, borderRadius: 37.5, margin: 20, marginRight: 20, }}
-              source={{ uri: img }} 
-              />
-            </TouchableHighlight>
-         <Text style={{ fontSize:25, borderLeftWidth: 2 , padding:15, margin:15,marginRight:35, }}>{pseudo}</Text>
-         <Button
-            raised="true"
-            title="Add friend"
-            icon={{
-              name: "arrow-right",
-              size: 15,
-
-            }}
-         />
-
-        </View>
-         }
+        { bddError ?
+          <Text>Make a research</Text>
+          :<FlatList
+            data={json}
+            keyExtractor={(item) => item._id}
+            renderItem={({ item }) => (
+             <Text>{item.pseudo}</Text>
+            )}
+            /> 
+            
+        }
+        
        </View>
+          
     )
   }
 
@@ -84,4 +71,8 @@ const styles = StyleSheet.create({
       // backgroundColor: 'red', height: '100%', width: '100%' 
   },
 });
+
+const mapStateToProps = (state) => {
+  return state
+}
 export default connect(mapStateToProps)(Search)
