@@ -240,6 +240,7 @@ function FriendProfile({route, navigation}, {props}) {
                 <PostGrid />
             </View>
           </Content>
+          <ModalPost />
         </Container>
     )}
     </Provider>
