@@ -170,7 +170,7 @@ route.post('/user/unfollow',verifyToken,(req,res,next) => {
 route.post('/user/suggests',verifyToken,(req,res,next) => {
     console.log('suggest request')
 
-    User.find({ _id : { $nin : req.id.id } }).limit(5)
+    User.find({ _id : { $nin : req.id.id } }).limit(10)
     .then((result) => {
         console.log('suggest succeed')
         res.status(200).json(result)

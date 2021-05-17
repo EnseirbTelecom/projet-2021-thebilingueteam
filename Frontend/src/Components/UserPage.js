@@ -57,7 +57,7 @@ function UserPage(props) {
       },
   }
 
-  const response = await fetch("http://10.168.255.53:9000/api/posts/post/delete", requestOptions);
+  const response = await fetch("http://192.168.1.78:9000/api/posts/post/delete", requestOptions);
   const json = await response.json();
   console.log(json);
   }
