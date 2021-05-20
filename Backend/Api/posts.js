@@ -11,7 +11,67 @@ const { time } = require('console')
 
 
 const route = express.Router()
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Post:
+ *       type: object
+ *       properties:
+ *         userId:
+ *           type: string
+ *         time: 
+ *            type: string
+ *            description: 
+ *         date:
+ *            type: string
+ *            description: date of the post
+ *         username:
+ *            type: string
+ *            description: username of the user who posted
+ *         userPP: 
+ *            type: string
+ *         title: 
+ *            type: string
+ *            description: uri to the user's profile picture
+ *         description:
+ *            type: array
+ *            description: list of all the accounts followed
+ *         imgsource: 
+ *            type: array  
+ *            description: list of all the accounts following
+ *       example:
+ *         mail: Jean.do@yahoo.fr
+ *         pseudo: Jean Do
+ *         password: JsJDeJsB3467
+ *         
+ *         
+ */
 
+/**
+ * @swagger
+ * /posts:
+ *   post:
+ *      summary: TO BE COMPLETED
+ *      tags: [Post]
+ *      parameters: 
+ *        - in: body
+ *          name: body
+ *          description: User object
+ *          required: true
+ *          schema:
+ *              $ref: "#components/schemas/User" 
+ *            
+ *      description: Checks if the email given is already in the database, if not, adds the user to the database with the specified pseudo, mail and password. The user is given a generic profile picture and his bio is an empty string. His id is automatically generated
+ *      responses :
+ *          '200':
+ *              description: A new user was created and he was given an authentication token
+ *          '500' : 
+ *              description: Error when adding the user 
+ *          '415': 
+ *              description: Email was already used by another user
+ * 
+*/
 
 route.post('/posts', (req, res) =>{
     console.log('liste des posts')
@@ -36,7 +96,23 @@ route.post('/posts', (req, res) =>{
     })
 })
 
-
+/**
+ * @swagger
+ * /posts/user:
+ *   get:
+ *      summary: Get all the posts of an user
+ *      tags: [Post]
+ *      parameters: 
+ *        - in: headers
+ *          name: body
+ *          required: true
+ *            
+ *      description: Get all the posts of an user
+ *      responses :
+ *          '200':
+ *              description: request successful
+ * 
+*/
 
 route.get('/posts/user', (req,res) =>{
     console.log('posts d un user')
@@ -47,6 +123,25 @@ route.get('/posts/user', (req,res) =>{
     })
 })
 
+/**
+ * @swagger
+ * /posts/post:
+ *   post:
+ *      summary: Create a new post
+ *      tags: [Post]
+ *      parameters: 
+ *        - in: body
+ *          name: body
+ *          description: Post object
+ *          required: true
+ *          schema:
+ *              $ref: "#components/schemas/Post" 
+ *            
+ *      description: Checks if the email given is already in the database, if not, adds the user to the database with the specified pseudo, mail and password. The user is given a generic profile picture and his bio is an empty string. His id is automatically generated
+ *      responses :
+ *          '200':
+ *              description: New post created
+*/
 
 route.post('/posts/post',verifyToken,(req,res,next) => {
     console.log('New post request')
@@ -72,6 +167,26 @@ route.post('/posts/post',verifyToken,(req,res,next) => {
         console.log(error)
     })
 })
+
+/**
+ * @swagger
+ * /posts/post/delete:
+ *   post:
+ *      summary: Deletes a post
+ *      tags: [Post]
+ *      parameters: 
+ *        - in: headers
+ *          name: headers
+ *          description: Post id
+ *          required: true
+ *            
+ *      description: delete a post with its id
+ *      responses :
+ *          '200':
+ *              description: post deleted
+ *          '415':  
+ *              description: error when deleting the post
+*/
 
 route.post('/posts/post/delete',(req,res,next) =>{
     console.log('supression d un poste');

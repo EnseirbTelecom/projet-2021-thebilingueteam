@@ -15,5 +15,29 @@ app.set("view engine", "ejs");
 app.use('/api', require('./Api/User'))
 app.use('/api', require('./Api/posts'))
 
+
+
+const swaggerUi = require('swagger-ui-express');
+const swaggerJsDoc= require('swagger-jsdoc');
+
+
+// doc: https://swagger.io/specification/#infoObject
+const swaggerOptions = {
+    swaggerDefinition : {
+        components: {},
+        info: {
+            title: "InpGram API",
+            description: "User Api Information",
+            servers: ["http://localhost:9000"],
+        }
+    },
+    apis: ["./Api/*.js"]
+};
+
+const swaggerDocument = swaggerJsDoc(swaggerOptions)
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
+
+
 const port = process.env.PORT_SERVER
 app.listen(port, () => console.log('Server started on port '+ port))
