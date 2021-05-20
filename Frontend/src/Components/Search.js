@@ -10,25 +10,42 @@ import { ListItem, Avatar } from 'react-native-elements';
 
 function Search(props) {
   const [value, setValue] = useState();
-  const [pseudo, setPseudo] = useState();
+  const [myPseudo, setMyPseudo] = useState();
   const [img, setImg] = useState("https://t4.ftcdn.net/jpg/03/46/93/61/360_F_346936114_RaxE6OQogebgAWTalE1myseY1Hbb5qPM.jpg");
   const [json, setJson] = useState();
   const [bddError, setBddError] = useState("Find users");
   const [bio, setBio] = useState();
 
+  
   useEffect(() => {
-    console.log('My Token :' + props.authToken);
-  })
+    //console.log('My Token :' + props.authToken);
+  async function getUserInfo () {
+
+    const requestOptions = {
+      method: 'GET',
+      headers: {
+        'Authorization': 'Bearer' + ' ' + props.authToken,
+        'Content-Type': 'application/json'
+      },
+    }
+    const response = await fetch("http://192.168.1.22:9000/api/user/pseudo", requestOptions);
+    const json = await response.json();
+    setMyPseudo(json)
+  }
+getUserInfo()
+})
 
   function updateSearch(value) {
+    console.log(myPseudo)
     const requestOptions = {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        'pseudo': value
+        'query': value,
+        'myPseudo': myPseudo
       }
     }
-    fetch("http://192.168.1.78:9000/api/user/search", requestOptions)
+    fetch("http://192.168.1.22:9000/api/user/search", requestOptions)
       .then(function (response) {
         if (!response.ok) {
           setBddError("Can't find this user")
@@ -37,7 +54,7 @@ function Search(props) {
           setBddError("")
           response.json().then((json) => {
             setJson(json)
-            console.log(JSON.stringify(json))
+           // console.log(JSON.stringify(json))
           })
         }
       })
@@ -73,14 +90,16 @@ function Search(props) {
               keyExtractor={(item) => item._id}
               renderItem={({ item }) => (
               <TouchableOpacity  onPress = {() => preventDefault(item)}>
-                <ListItem style={styles.itemContainer}>
+                {myPseudo !== item.pseudo ?
+                <ListItem style={styles.itemContainer}>  
                     <Avatar source={{uri: item.userPP}} />
                     <ListItem.Content>
-                      <ListItem.Title>{item.pseudo}</ListItem.Title>
+                      <ListItem.Title>{item.pseudo}</ListItem.Title>     
                       <ListItem.Subtitle>{item.mail}</ListItem.Subtitle>
                     </ListItem.Content>
                     <ListItem.Chevron color="black" />
-                </ListItem>
+                </ListItem> 
+                : <View></View>}
               </TouchableOpacity>
               )}
               /> 

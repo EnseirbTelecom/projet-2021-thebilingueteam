@@ -56,7 +56,7 @@ function UserPage(props) {
       },
   }
 
-  const response = await fetch("http://192.168.1.78:9000/api/posts/post/delete", requestOptions);
+  const response = await fetch("http://192.168.1.22:9000/api/posts/post/delete", requestOptions);
   const json = await response.json();
   console.log(json);
   }
@@ -172,7 +172,7 @@ function UserPage(props) {
         'Content-Type': 'application/json'
       },
     }
-    const response = await fetch("http://192.168.1.78:9000/api/user", requestOptions);
+    const response = await fetch("http://192.168.1.22:9000/api/user", requestOptions);
     const json = await response.json();
     setUserName(json.pseudo);
     setBio(json.bio);
@@ -189,7 +189,7 @@ function UserPage(props) {
       },
   }
 
-  const response = await fetch("http://192.168.1.78:9000/api/posts/user", requestOptions);
+  const response = await fetch("http://192.168.1.22:9000/api/posts/user", requestOptions);
   const json = await response.json();
   console.log(json);
   console.log('jai recu les posts')

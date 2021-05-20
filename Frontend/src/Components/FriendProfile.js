@@ -136,7 +136,7 @@ function FriendProfile({route, navigation}, {props}) {
               userFollowed: username,
           })
       }
-      const response = await fetch("http://192.168.1.78:9000/api/user/follow", requestOptions);
+      const response = await fetch("http://192.168.1.22:9000/api/user/follow", requestOptions);
     }
 
     const _handleUnfollow = async (username) => {
@@ -150,7 +150,7 @@ function FriendProfile({route, navigation}, {props}) {
               userFollowed: username,
           })
       }
-      const response = await fetch("http://192.168.1.78:9000/api/user/unfollow", requestOptions);
+      const response = await fetch("http://192.168.1.22:9000/api/user/unfollow", requestOptions);
     }
 
     const getUserInfo = async () => {
@@ -162,7 +162,7 @@ function FriendProfile({route, navigation}, {props}) {
           'Content-Type': 'application/json'
         },
       }
-      const response = await fetch("http://192.168.1.78:9000/api/user", requestOptions);
+      const response = await fetch("http://192.168.1.22:9000/api/user", requestOptions);
       const json = await response.json();
       console.log(json.following)
       setmyFollowing(json.following);

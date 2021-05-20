@@ -183,6 +183,33 @@ route.get('/user',verifyToken,(req,res,next) => {
         res.status(415).json(err)
     })
 })
+/**
+ * @swagger
+ * /user/pseudo:
+ *   get:
+ *      tags: [User]
+ *      summary: Finds user's information in the database with his id
+ *      parameters: 
+ *        - name: id
+ * 
+ *      description: Similar to /user, expect it only returns the user's pseudo
+ *      responses :
+ *          '200':
+ *              description: Request success 
+ *          '415': 
+ *              description: Error during the request
+*/
+route.get('/user/pseudo',verifyToken,(req,res,next) => {
+    console.log('recuperation du profil utilisateur')
+    User.findById(req.id.id)
+    .then((result) => {
+        res.status(200).json(result.pseudo)
+    })
+    .catch((err) =>{
+        console.log(err)
+        res.status(415).json(err)
+    })
+})
 
 /**
  * @swagger
@@ -415,8 +442,8 @@ route.post('/user/suggests',verifyToken,(req,res,next) => {
 
 route.get('/user/search',(req,res,next) => {
     console.log('New search request')
-    const {pseudo} = req.headers
-    User.find({pseudo: {$regex: pseudo, $options: "i"}})
+    const {query, myPseudo} = req.headers
+    User.find({pseudo: {$nin: myPseudo,$regex: query, $options: "i"}})
     .then((doc) =>{
         if(doc===null){//echec la recherche
             console.log('user does not exist')

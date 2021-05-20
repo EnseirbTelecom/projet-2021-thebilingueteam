@@ -28,7 +28,7 @@ function EditProfile({ route, navigation }) {
   }
 
   const sendUserBio = () => {
-    fetch("http://192.168.1.78:9000/api/user/bio", {
+    fetch("http://192.168.1.22:9000/api/user/bio", {
       method: 'POST',
       headers: {
         'Authorization': 'Bearer' + ' ' + authToken,
@@ -41,7 +41,7 @@ function EditProfile({ route, navigation }) {
   }
 
   const sendUserPic = () => {
-    fetch("http://192.168.1.78:9000/api/user/profilePicture", {
+    fetch("http://192.168.1.22:9000/api/user/profilePicture", {
       method: 'POST',
       headers: {
         'Authorization': 'Bearer' + ' ' + authToken,

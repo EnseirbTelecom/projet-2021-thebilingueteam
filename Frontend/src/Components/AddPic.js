@@ -70,7 +70,7 @@ class AddPic extends React.Component {
       },
     }
 
-    const response = await fetch("http://192.168.1.78:9000/api/user", requestOptions);
+    const response = await fetch("http://192.168.1.22:9000/api/user", requestOptions);
     const json = await response.json();
     console.log(json);
     this.setState({ username: json.pseudo, userPP: json.userPP });
@@ -78,7 +78,7 @@ class AddPic extends React.Component {
 
   onSubmit = async () => {
 
-    fetch("http://192.168.1.78:9000/api/posts/post", {
+    fetch("http://192.168.1.22:9000/api/posts/post", {
       method: 'POST',
       headers: {
         'Authorization': 'Bearer' + ' ' + this.props.authToken,

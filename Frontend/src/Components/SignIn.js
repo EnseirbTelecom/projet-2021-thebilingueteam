@@ -70,7 +70,7 @@ class SignIn extends React.Component {
                 'password': this.state.password,
             },
         }
-        fetch("http://192.168.1.78:9000/api/login", requestOptions)
+        fetch("http://192.168.1.22:9000/api/login", requestOptions)
         .then((response) => {    
             console.log(response.status); // Will show you the status
             if (!response.ok) {

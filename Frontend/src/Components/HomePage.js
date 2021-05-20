@@ -105,7 +105,7 @@ class HomePage extends React.Component {
                 'Content-Type': 'application/json'
             },
         }
-        const response = await fetch("http://192.168.1.78:9000/api/user/suggests", requestOptions);
+        const response = await fetch("http://192.168.1.22:9000/api/user/suggests", requestOptions);
         const json = await response.json();
         this.setState({ suggestList: json });
     }
@@ -122,7 +122,7 @@ class HomePage extends React.Component {
                 userFollowed: username,
             })
         }
-        const response = await fetch("http://192.168.1.78:9000/api/user/follow", requestOptions);
+        const response = await fetch("http://192.168.1.22:9000/api/user/follow", requestOptions);
     }
 
     componentDidMount() {
@@ -154,7 +154,7 @@ class HomePage extends React.Component {
 
         }
 
-        const response = await fetch("http://192.168.1.78:9000/api/posts", requestOptions);
+        const response = await fetch("http://192.168.1.22:9000/api/posts", requestOptions);
 
         if (!response.ok) {
             console.log('fin de la liste');
@@ -177,7 +177,7 @@ class HomePage extends React.Component {
                 'Content-Type': 'application/json'
             },
         }
-        const response = await fetch("http://192.168.1.78:9000/api/user", requestOptions);
+        const response = await fetch("http://192.168.1.22:9000/api/user", requestOptions);
         const json = await response.json();
         this.setState({ following: json.following })
     }
