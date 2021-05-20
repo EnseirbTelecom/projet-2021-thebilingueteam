@@ -52,24 +52,26 @@ const route = express.Router()
  * @swagger
  * /posts:
  *   post:
- *      summary: TO BE COMPLETED
+ *      summary: Load 10 posts from your following users
  *      tags: [Post]
  *      parameters: 
+ *        - in: header
+ *          name: header
+ *          description: offset
+ *          required: true
+ *          type: int
  *        - in: body
  *          name: body
- *          description: User object
+ *          description: following
  *          required: true
- *          schema:
- *              $ref: "#components/schemas/User" 
+ *          type: array
  *            
- *      description: Checks if the email given is already in the database, if not, adds the user to the database with the specified pseudo, mail and password. The user is given a generic profile picture and his bio is an empty string. His id is automatically generated
+ *      description: Load 10 posts from your following users
  *      responses :
  *          '200':
- *              description: A new user was created and he was given an authentication token
- *          '500' : 
- *              description: Error when adding the user 
+ *              description: Posts loaded successfully
  *          '415': 
- *              description: Email was already used by another user
+ *              description: not more documents to load
  * 
 */
 
@@ -111,6 +113,10 @@ route.post('/posts', (req, res) =>{
  *      responses :
  *          '200':
  *              description: request successful
+ *              schema: 
+ *                  type: "array"
+ *                  items: 
+ *                      $ref; "#components/schemas/Posts"
  * 
 */
 
