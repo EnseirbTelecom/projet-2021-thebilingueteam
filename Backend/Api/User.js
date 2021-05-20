@@ -58,6 +58,8 @@ const route = express.Router();
  *   post:
  *      summary: Create a new user
  *      tags: [User]
+ *      consumes: application/json
+ *      produces: application/json
  *      parameters: 
  *        - in: body
  *          name: body
@@ -196,6 +198,10 @@ route.get('/user',verifyToken,(req,res,next) => {
  *      responses :
  *          '200':
  *              description: Request success 
+ *              schema:
+ *                  type: "array"
+ *                  items: 
+ *                      $ref: "#components/schemas/User"
  *          '415': 
  *              description: Error during the request
 */
